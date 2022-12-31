@@ -34,8 +34,10 @@ from flask_mobility import Mobility
 import os
 import re
 
-from keys import SECRET_KEY_keys
-
+try:
+    from keys import SECRET_KEY_keys
+except:
+    SECRET_KEY_keys="nokey"
 
 from forms import (AddUser,
                    AddComment,

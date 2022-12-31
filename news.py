@@ -1,7 +1,14 @@
 import requests
 from flask import jsonify
 import os
-from keys import API_KEY_keys, API_KEY_2_keys 
+
+try:
+    from keys import API_KEY_keys, API_KEY_2_keys 
+except:
+    API_KEY_keys="nokey"
+    API_KEY_2_keys="nokey"
+    
+
 
 API_KEY = os.environ.get("API_KEY", API_KEY_keys)
 BASE_URL = "https://gnews.io/api/v4/"

@@ -4,8 +4,13 @@ from wtforms.validators import InputRequired, Length, NumberRange, URL, Optional
 from wtforms.widgets import TextArea
 from flask_wtf.recaptcha import RecaptchaField
 import os
-from keys import RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys
 
+try:
+    from keys import RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys
+except:
+    RECAPTCHA_PRIVATE_KEY_keys="nokey"
+    RECAPTCHA_PUBLIC_KEY_keys="nokey"
+    
 RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
 RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY", RECAPTCHA_PRIVATE_KEY_keys)
 
