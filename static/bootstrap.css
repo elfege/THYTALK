@@ -1,0 +1,82 @@
+ /* Set height of the grid so .sidenav can be 100% (adjust if needed) */
+ .row.content {
+   height: 1500px
+ }
+
+ /* Set gray background color and 100% height */
+ .sidenav {
+   background-color: #f1f1f1;
+   height: 100%;
+ }
+
+ /* Set black background color, white text and some padding */
+ footer {
+   background-color: #555;
+   color: white;
+   padding: 15px;
+ }
+
+ /* On small screens, set height to 'auto' for sidenav and grid */
+ @media screen and (max-width: 767px) {
+   .sidenav {
+     height: auto;
+     padding: 15px;
+   }
+
+   .row.content {
+     height: auto;
+     width:100%;
+   }
+
+   .btn.btn-danger {
+    width:100%;
+   }
+   .btn.btn-primary {
+    width:100%;
+   }
+ }
+
+ .row-height {
+   height: 100vh;
+   overflow-y: scroll;
+ }
+
+ 
+
+ 
+/*Set up the columns with a 100% height, body color and overflow scroll*/
+
+.top {
+  background-color: rgb(227, 236, 238);
+}
+.left{
+  background-color: rgb(227, 236, 238);
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.right{
+  background-color: rgb(181, 193, 196);
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+.center{
+  background-color: rgb(181, 193, 196);
+  height: 100vh;
+  overflow-y: scroll;
+}
+
+
+
+ /*Remove the scrollbar from Chrome, Safari, Edge and IE*/
+ ::-webkit-scrollbar {
+   width: 0px;
+   background: transparent;
+ }
+
+ * {
+   -ms-overflow-style: none !important;
+ }
+
+

@@ -1,0 +1,32 @@
+
+* A chat webapp called "ThyTalk"
+  
+- Forum where people get to exchange about latest news. 
+
+API
+https://gnews.io/ 
+
+
+Functionalities:
+
+Server side API:
+- Posting comments
+- Replying to posts
+- Liking / Disliking posts or replys to posts
+  
+Outside API:
+- Get latest breaking news
+- Like some articles
+
+
+Data input processing: 
+    [maybe Using Jupyter], building a db of selected articles by a user, 
+    gathering words that repeat the most often (as of 3 times up to 10 times)
+
+    From there updating a user's attached table with their favorite keywords
+    Run searches for the user and customize their news page
+
+    recording their search keywords as well and updating keywords lists accordingly
+
+
+

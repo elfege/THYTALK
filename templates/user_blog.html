@@ -1,0 +1,78 @@
+{% extends "base_talk.html" %}
+{% block title %}talk{% endblock %}
+
+
+
+{# SIDE CONTENT #}
+{% block sidecontent_l %}
+<h1>{{ user.name }}</h1>
+<p>First Name: <b><i>{{ user.name }}</i></b></p>
+<p>Last Name: <b><i>{{ user.last_name }}</i></b></p>
+
+{% if user.img_url %}
+<div class="talk_img">
+    <img src="{{user.img_url}}" class="rounded float-right img-thumbnail">
+</div>
+{% endif %}
+
+<form action="/talk/add_post/{{user.id}}">
+    <button>Add Post</button>
+</form>
+
+{%endblock%}
+{# END OF SIDE CONTENT #}
+
+{# MAIN CONTENT #}
+{% block content %}
+
+    <form method="POST">
+
+        {{form.hidden_tag()}}
+
+        {#{%if form.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+
+        {{ form.csrf_token }}
+
+        {% if form.csrf_token.errors %}
+        <div class="messages error">You have submitted an invalid CSRF token</div>
+        {% endif %}
+
+        {{form.post_title.label}}
+        <br>
+        {{form.post_title(class="form-control", type="textarea", rows="1")}}
+        <br>
+        {{form.post_content.label}}
+        <br>
+
+        {{form.post_content(class_="form-control md-textarea", rows="5")}}
+
+        {%for error in form.errors %}
+        <small class="form-text danger">
+            {{error}}
+        </small>
+        {%endfor%}
+        {#{%endif%}#}
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-default" type="button">
+                <span class="glyphicon glyphicon-send"></span> Submit </button>
+            </button>
+        </span>
+    </form>
+
+
+    {%if old_posts %}
+    {% for post in old_posts|reverse %}
+    <br>
+    <div>
+        {{post.post_title}}
+        <div class="well well-lg">
+            {{post.post}}
+        </div>
+    </div>
+
+{%endfor%}
+{%endif%}
+
+
+{%endblock%}
+{# END OF MAIN CONTENT #}

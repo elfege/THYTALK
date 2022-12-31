@@ -1,0 +1,53 @@
+{% extends "base_talk.html" %}
+{% block title %}talk{% endblock %}
+
+
+
+{# MAIN CONTENT #}
+{% block content %}
+
+<h2>{{user.name}} {{user.last_name}}</h2>
+
+<form action="/talk/edit/{{user.id}}" method="POST">
+    {{form.hidden_tag()}}
+
+    {%for field in form
+    if field.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+
+    <div class="form-group">
+        {{ field.label }}
+        {{field(class_="form-control", size=32)}}
+
+
+
+        {%for error in field.errors %}
+        {{error}}
+        {%endfor%}
+
+
+
+    </div>
+    {%endfor%}
+    {% for error in form.recaptcha.errors %}
+    {{ error }}
+    {% endfor %}
+    <!-- <button>submit</button> -->
+</form>
+
+{%endblock%}
+{# END OF MAIN CONTENT #}
+
+{# SIDE CONTENT RIGHT #}
+{% block sidecontent_r %}
+<h1>{{ user.name }}</h1>
+<p>First Name: <b><i>{{ user.name }}</i></b></p>
+<p>Last Name: <b><i>{{ user.last_name }}</i></b></p>
+
+{% if user.img_url %}
+<div class="talk_img">
+    <img src="{{user.img_url}}" class="rounded float-right img-thumbnail">
+</div>
+{% endif %}
+
+{%endblock%}
+{# END OF SIDE CONTENT #}

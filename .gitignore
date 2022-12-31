@@ -1,0 +1,14 @@
+/__pycache__
+/venv
+
+*.md
+
+test_talk.py 
+
+draft.py
+
+keys.py 
+
+
+
+requirements_backup.txt

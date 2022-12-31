@@ -1,0 +1,137 @@
+h1 {
+    color:rgb(46, 46, 76);
+}
+
+body {
+    background-color: rgb(208, 197, 182) ;
+    position:fixed;
+    width:100%;
+    left:-10px;   
+}
+
+
+.navbar {
+    background-color: black;
+    position:fixed;
+    width: 101%;
+    top:0px;
+}
+.navbar a {
+    float:left;
+    padding: 14px 16px;
+    font-size: 17px;
+    text-align: center;
+    color:rgb(235, 246, 246);
+    text-decoration: none;
+ 
+
+}
+
+.navbar a:hover{
+    background-color: rgb(106, 62, 9);
+    color:black;
+}
+
+.pageName {
+    /* border: 1px solid grey; */
+    /* text-shadow: 5px 5px 10px; */
+    text-align: center;
+    position:relative;
+    margin:auto;
+    width: 50%;
+    top:50px;
+}
+.pageName h1 {
+    color:rgb(51, 57, 74);
+}
+
+.content {
+    border: 1px solid grey;
+    background-color: rgb(180, 196, 210);
+    position:relative;
+    top:100px;
+    margin:auto;
+    width: 50%;
+    height:50%;
+}
+
+ul {
+    list-style-type: none;
+}
+
+.messages .error {
+    position:relative;
+    width:50%;
+    color: rgb(58, 53, 53);
+    font-weight: bolder;
+    background-color: rgb(159, 69, 69);   
+    text-align: center;
+}
+
+.messages .success {
+    position:relative;
+    width:50%;
+    color: rgb(55, 55, 74);
+    font-weight: bold;
+    background-color: antiquewhite;
+    text-align: center;
+}
+
+.story{
+    position:relative;
+    top:25%;
+    color:rgb(69, 13, 13);
+    font-size:30px;
+    text-align: justify;
+}
+
+table {
+    position:relative;
+    margin:auto;
+}
+
+.homelink {
+    margin:auto;
+    width:50%;
+    padding-top:50px;
+}
+
+footer{
+    background-color: rgb(89, 67, 67);
+    position:fixed;
+    bottom: 0px;
+    width: 101%;
+    height: 10%;
+}
+
+footer a {
+    
+    position:relative;
+    margin:auto;
+    width:50%;
+    top:50%;
+    padding-top: 50px;
+    font-size: 17px;
+    color:rgb(235, 246, 246);
+    text-decoration: none;
+
+}
+
+footer div {
+    
+    position:relative;
+    border: .5px solid rgb(105, 77, 77);
+    text-align: center;
+    margin: auto;
+    width:50%;
+    height:90%;
+}
+
+footer a:hover{
+    background-color: bisque;
+    color:black;
+}
+
+.greetings  {
+    color:rgb(19, 19, 21)
+}

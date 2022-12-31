@@ -1,0 +1,49 @@
+{% extends "base_talk.html" %}
+{% block title %}THY TALK{% endblock %}
+
+
+
+{# MAIN CONTENT #}
+{% block content %}
+<div class="col-12">
+    {{post.post}}
+    <form action="/api/reply/{{post.id}}" method="POST">
+
+        {{form.hidden_tag()}}
+
+        {%for field in form
+        if field.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+
+        <div class="form-group">
+            {{ field.label }}
+            {{field(class_="form-control", rows=20)}}
+
+
+
+            {%for error in field.errors %}
+            {{error}}
+            {%endfor%}
+
+
+
+        </div>
+        {%endfor%}
+
+        {% for error in form.recaptcha.errors %}
+
+        {{ error }}
+        {% endfor %}
+        <span class="input-group-btn">
+            <button type="submit" class="btn btn-default" type="button">
+                <span class="glyphicon glyphicon-send"></span> Submit </button>
+            </button>
+        </span>
+    </form>
+</div>
+
+{%endblock%}
+{# END OF MAIN CONTENT #}
+
+<script>
+    $(".sidenav").remove()
+</script>
