@@ -1,6 +1,14 @@
 """Talk App"""
 
 
+from flask_restful import (Api,
+                           Resource,
+                           reqparse)
+from forms import (AddUser,
+                   AddComment,
+                   AddResponse,
+                   LoginForm,
+                   UpdateUser,)
 from news import get_news, get_news_2
 import requests
 from werkzeug.datastructures import ImmutableMultiDict
@@ -35,37 +43,31 @@ import os
 import re
 
 try:
-    from keys import SECRET_KEY_keys, RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys
+    from keys import SECRET_KEY_keys, RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys, API_KEY_keys, API_KEY_2_keys
 except:
     SECRET_KEY_keys = "nokey"
     RECAPTCHA_PRIVATE_KEY_keys = "nokey"
     RECAPTCHA_PUBLIC_KEY_keys = "nokey"
-
-print(f"RECAPTCHA_PRIVATE_KEY_keys = {RECAPTCHA_PRIVATE_KEY_keys}")
-print(f"RECAPTCHA_PUBLIC_KEY_keys = {RECAPTCHA_PUBLIC_KEY_keys}")
-
-
-    
-RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
-RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY", RECAPTCHA_PRIVATE_KEY_keys)
+    API_KEY_keys = "nokey"
+    API_KEY_2_keys = "nokey"
 
 
-
-from forms import (AddUser,
-                   AddComment,
-                   AddResponse,
-                   LoginForm,
-                   UpdateUser,)
+# print(f"RECAPTCHA_PRIVATE_KEY_keys = {RECAPTCHA_PRIVATE_KEY_keys}")
+# print(f"RECAPTCHA_PUBLIC_KEY_keys = {RECAPTCHA_PUBLIC_KEY_keys}")
 
 
-from flask_restful import (Api,
-                           Resource,
-                           reqparse)
+RECAPTCHA_PUBLIC_KEY = os.environ.get(
+    "RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
+RECAPTCHA_PRIVATE_KEY = os.environ.get(
+    "RECAPTCHA_PRIVATE_KEY", RECAPTCHA_PRIVATE_KEY_keys)
+
+API_KEY = os.environ.get('API_KEY', API_KEY_keys)
+API_KEY_2 = os.environ.get('API_KEY_2', API_KEY_2_keys)
+
 
 app = Flask(__name__)
 Mobility(app)
 api = Api(app)
-
 
 
 # BEWARE that postgres:/// or postgresql:/// are now deprecated and will return dialect error
@@ -76,6 +78,9 @@ app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', SECRET_KEY_keys)
 app.config['RECAPTCHA_PUBLIC_KEY'] = RECAPTCHA_PUBLIC_KEY
 app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY
+app.config['API_KEY'] = API_KEY
+app.config['API_KEY_2'] = API_KEY_2_keys
+
 
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
@@ -143,13 +148,6 @@ def main_page():
                            saved_articles=saved_articles)
 
 
-try:
-    from keys import API_KEY_keys, API_KEY_2_keys
-except:
-    API_KEY_keys = "nokey"
-    API_KEY_2_keys = "nokey"
-
-
 @app.route("/talk/api/search_news/<keyword>")
 def search_news(keyword):
 
@@ -161,14 +159,12 @@ def search_news(keyword):
 
     if ("user_id" in session):
 
-        url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2_keys
+        url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2 
         print(f"GET {url} ---------------------------")
 
         resp = requests.get(url, params={
-            "lang": "us"   #,"pageSize": "20"
+            "lang": "us"  # ,"pageSize": "20"
         })
-        
-      
 
         print(f"::::::::::::::::::::::::::::::::::::::: {resp.status_code}")
 
