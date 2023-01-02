@@ -134,6 +134,50 @@ def main_page():
                            saved_articles=saved_articles)
 
 
+try:
+    from keys import API_KEY_keys, API_KEY_2_keys 
+except:
+    API_KEY_keys="nokey"
+    API_KEY_2_keys="nokey"
+    
+@app.route("/talk/api/search_news/<keyword>")
+def search_news(keyword):
+    
+    users = User.query.all()
+    form = AddUser()
+    user_auth = session.get("user_id", None)
+    all_posts = Post.query.all()
+    saved_articles = None
+    
+    if ("user_id" in session):
+        
+        url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2_keys
+        print(f"GET {url} ---------------------------")
+        
+        resp = requests.get(url, params={"lang":"us"})  
+        
+        print(f"::::::::::::::::::::::::::::::::::::::: {resp}")     
+        
+        # if resp != "200":
+        #     return jsonify(state="[]")
+        
+        news = resp.json()
+        articles = news['articles']
+        
+        # print(f"articles: {articles}")
+        
+        return jsonify(articles=articles)
+    
+    else:
+        return jsonify(state="loginrequired")
+    
+    
+   
+    
+    # print(f"RESPONSE NEWS SEARCH: {resp.json()}")
+    
+    
+
 @app.route("/talk/signup", methods=["POST", "GET"])
 def add_user():
     """WTF version of add_user()"""
@@ -174,10 +218,7 @@ def add_user():
                                User=User,
                                all_posts=all_posts,
                                form=form)
-        
-        
-
-
+ 
 @app.route("/talk/signin", methods=["POST", "GET"])
 def signin():
     """signing in"""

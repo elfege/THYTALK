@@ -46,4 +46,3 @@ def get_news_2():
 
 
 
-

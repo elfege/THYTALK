@@ -82,17 +82,13 @@
             </ul>
 
             {%if request.MOBILE%}
-            <form class="form-inline my-2 my-xs-0" style="float:left">
-              <input class="form-control" type="search" placeholder="Search" aria-label="Search" style="width:100px;">
-              <button class="btn btn-primary bi bi-search" style="width:50px;display:inline-block"
-                type="submit"></button>
-            </form>
+            <input class="form-control" id="searchNews" type="search" placeholder="Search the news" aria-label="Search"
+              style="width:100px;">
+            <button class="btn btn-primary bi bi-search" style="width:50px;display:inline-block" id="searchNewsButton"
+              type="submit"></button>
             {%else%}
-            <form class="form-inline my-2 my-xs-0" style="float:right">
-              <input class="form-control mr-xs-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-primary bi bi-search" type="submit"></button>
-
-            </form>
+            <input class="form-control mr-xs-2" type="search" placeholder="Search" aria-label="Search" id="searchNews">
+            <button class="btn btn-primary bi bi-search" id="searchNewsButton" type="submit"></button>
             {%endif%}
           </div>
         </nav>
@@ -360,7 +356,7 @@
                 <div class="container-fluid">
                   <div class="row">
                     <!-- Featured image -->
-                    <div class="bg-image col-xs-12">
+                    <div class="bg-image col-xs-12 imgArticle">
                       <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
                       <a class="links" href="#!">
                         <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
@@ -368,13 +364,13 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="col-12 text-start">
+                    <div class="col-12 text-start articlePubDate">
                       <u> {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
                     </div>
                   </div>
                   <!-- Article title and description -->
                   <div class="row">
-                    <div class="col-12 text-start">
+                    <div class="col-12 text-start artticleDescription">
                       <a class="links" href="{{articles[0]['url']}}" class="text-dark">
                         <h5><b>{{articles[0]['description']}}</b></h5>
                       </a>
@@ -390,27 +386,26 @@
 
                 {%for article in articles%}
                 {%if article['title'] != articles[0]['title']%}
-                
-                  <div class="row mb-4 border-bottom pb-2">
 
-                    <div class="col-9">
-                      <img src="{{article['image']}}" class="img-fluid float-left"
-                        alt="" />
-                    </div>
+                <div class="row mb-4 border-bottom pb-2">
 
-                    <div class="col-9">
-                      <p class="h6"><a class="links"
-                          href="{{article['url']}}"><strong>{{article['description']}}</a></strong></p>
-                      <p>
-                        <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
-                      </p>
-                    </div>
+                  <div class="col-9 imgArticle">
+                    <img src="{{article['image']}}" class="img-fluid float-left" alt="" />
+                  </div>
 
-                    <div class="col-6">
-                      <button class="btn glyphicon glyphicon-save savearticle_cls" id="savearticle{{loop.index}}"
-                        data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
+                  <div class="col-9 artticleDescription">
+                    <p class="h6"><a class="links"
+                        href="{{article['url']}}"><strong>{{article['description']}}</a></strong></p>
+                    <div class="articlePubDate">
+                      <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
                     </div>
                   </div>
+
+                  <div class="col-6">
+                    <button class="btn glyphicon glyphicon-save savearticle_cls" id="savearticle{{loop.index}}"
+                      data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
+                  </div>
+                </div>
                 {%endif%}
                 {%endfor%}
 
@@ -445,5 +440,7 @@
 
 </body>
 <script src="/static/app.js"></script>
+<script src="/static/stories.js"></script>
+<script src="/static/news.js"></script>
 
 </html>
