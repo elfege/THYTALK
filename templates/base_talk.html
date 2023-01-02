@@ -53,7 +53,7 @@
 
         </a>
       </div>
-      <div class="col-xs-10">
+      <div class="col-xs-10 top">
 
         <nav class="navbar navbar-expand-sm navbar-light static-top d-flex justify-content-end ">
 
@@ -101,18 +101,18 @@
       <!-- USERS (formerly 'side content') -->
       <!-- USERS LIST (NO MOBILE DEVICE) -->
       {%if not request.MOBILE%}
-      <div class="container-fluid col-xs-2 sidenav">
+      <div class="container-fluid col-xs-2 left">
         <nav id="sidebar">
 
           <ul class="list-unstyled components">
-            <li class="active">
-              <a class="links" href="#usersSubmenu" data-toggle="collapse" aria-expanded="false" id="subusermenu">USERS</a>
+            <li class="">
+              <a class="links" href="#usersSubmenu" data-toggle="collapse" aria-expanded="false"
+                id="subusermenu">USERS</a>
               <ul class="collapse" id="usersSubmenu">
+
+                <!-- CURRENTLY LOGGED IN USER -->
+                {%if currentuser%}
                 <li>
-
-
-                  <!-- CURRENTLY LOGGED IN USER -->
-                  {%if currentuser%}
                   <div class="row">
                     <div class="col-xs-4">
                       <h6>{{ currentuser.name }}</h6>
@@ -121,14 +121,17 @@
                   <div class="row">
 
                     <div class="col-xs-4">
-                      <a {%if session['user_id']==currentuser.id%} href="/talk/{{ currentuser.id }}" {% else %} href="#"
-                        {%endif%}>
-                        {% if currentuser.img_url %}
-                        <img src="{{currentuser.img_url}}" class="img-fluid" width="50px">
-                        {%else%}
-                        <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" width="50px" />
-                        {% endif %}
-                      </a>
+                      {%if session['user_id']==currentuser.id%}
+                      <a href="/talk/{{ currentuser.id }}">
+                        {% else %}
+                        <a href="#">
+                          {%endif%}
+                          {% if currentuser.img_url %}
+                          <img src="{{currentuser.img_url}}" class="img-fluid" width="50px">
+                          {%else%}
+                          <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" width="50px" />
+                          {% endif %}
+                        </a>
                     </div>
 
                     <div class="col-xs-4">
@@ -146,13 +149,15 @@
 
                   </div>
                   <hr>
-                  {%endif%}
+                </li>
+                {%endif%}
 
 
-                  <!-- ALL OTHER USERS -->
-                  {%if users%}
+                <!-- ALL OTHER USERS -->
+                {%if users%}
 
-                  {% for user in users %}
+                {% for user in users %}
+                <li class="navbar-item">
                   {% if user != currentuser %}
                   <div class="row">
                     <div class="col-xs-4">
@@ -188,12 +193,9 @@
                   </div>
                   <br>
                   {%endif%}
-
-                  {% endfor %}
-                  {%endif%}
-
-
                 </li>
+                {% endfor %}
+                {%endif%}
               </ul>
             </li>
 
@@ -302,13 +304,13 @@
       {%if not
       request.MOBILE%}<!-- BEWARE OF SHIFTED INDENTATION DUE TO JINJA CONDITION HERE: THIS IS NOT AN ANOMALY! -->
       <div class="col-xs-6 center">
-        
-          {%else%}
-          <div class="col-xs-10 center">
-            <a class="messages" style="width:50%" href="#news_mobile">NEWS</a>
-            <br>
-            {%endif%}
-            <div class="row">
+
+        {%else%}
+        <div class="col-xs-10 center">
+          <a class="messages" style="width:50%" href="#news_mobile">NEWS</a>
+          <br>
+          {%endif%}
+          <div class="row">
             <!-- ***********************FLASH******************************** -->
             {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
@@ -346,7 +348,7 @@
 
         <!-- SIDE CONTENT RIGHT (OR BOTTOM IF MOBILE PLATFORM)-->
         {%if request.MOBILE%}<!-- BEWARE OF SHIFTED INDENTATION DUE TO JINJA CONDITION HERE: THIS IS NOT AN ANOMALY! -->
-        <div class="row" id="news_mobile" style="margin-top:10px; "><!-- NEW ROW IF MOBILE PLATFORM -->
+        <div class="row" id="news_mobile" style="margin-top:10px;"><!-- NEW ROW IF MOBILE PLATFORM -->
           <div class="col-lg-fluid">
             {%else%}
             <div class="col-xs-4 sidenav right">
@@ -354,7 +356,7 @@
 
               <div class="card-fluid col-xs-12" style="padding-top:50px;"> <!-- ENTIRE NEWS SECTION -->
 
-                <!-- HEADER NEWS CARD -->
+                <!-- HEADER NEWS EXERP CARD -->
                 <div class="container-fluid">
                   <div class="row">
                     <!-- Featured image -->
@@ -388,15 +390,15 @@
 
                 {%for article in articles%}
                 {%if article['title'] != articles[0]['title']%}
-                <a class="links" href="" class="text-dark">
+                
                   <div class="row mb-4 border-bottom pb-2">
 
-                    <div class="col-6">
-                      <img src="{{article['image']}}" class="img-fluid shadow-1-strong rounded"
-                        alt="Hollywood Sign on The Hill" />
+                    <div class="col-9">
+                      <img src="{{article['image']}}" class="img-fluid float-left"
+                        alt="" />
                     </div>
 
-                    <div class="col-6">
+                    <div class="col-9">
                       <p class="h6"><a class="links"
                           href="{{article['url']}}"><strong>{{article['description']}}</a></strong></p>
                       <p>
@@ -409,7 +411,6 @@
                         data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
                     </div>
                   </div>
-                </a>
                 {%endif%}
                 {%endfor%}
 

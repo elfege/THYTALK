@@ -50,24 +50,25 @@
   background-color: rgb(227, 236, 238);
 }
 .left{
-  background-color: rgb(227, 236, 238);
+  
+  background-color: rgb(243, 247, 248);
   height: 100vh;
   overflow-y: scroll;
 }
 
 .right{
-  background-color: rgb(181, 193, 196);
+  
+  background-color: rgb(243, 247, 248);
   height: 100vh;
   overflow-y: scroll;
 }
 
 .center{
-  background-color: rgb(181, 193, 196);
+  
+  background-color: rgb(243, 247, 248);
   height: 100vh;
   overflow-y: scroll;
 }
-
-
 
  /*Remove the scrollbar from Chrome, Safari, Edge and IE*/
  ::-webkit-scrollbar {
@@ -80,3 +81,12 @@
  }
 
 
+ .links {
+  color:rgb(12, 5, 68);
+  
+}
+
+/* shadow-sm p-2 bg-white rounded" */
+/* well well-lg w-100 h-100 post" */
+/* d-flex justify-content-end mb-4 p-0" */
+/* "well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded" */

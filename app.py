@@ -35,17 +35,18 @@ import os
 import re
 
 try:
-    from keys import SECRET_KEY_keys
+    from keys import SECRET_KEY_keys, RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys
 except:
     SECRET_KEY_keys="nokey"
+    RECAPTCHA_PRIVATE_KEY_keys="nokey"
+    RECAPTCHA_PUBLIC_KEY_keys="nokey"
 
 from forms import (AddUser,
                    AddComment,
                    AddResponse,
                    LoginForm,
-                   UpdateUser,
-                   RECAPTCHA_PUBLIC_KEY,
-                   RECAPTCHA_PRIVATE_KEY)
+                   UpdateUser,)
+
 
 from flask_restful import (Api,
                            Resource,
@@ -57,8 +58,8 @@ api = Api(app)
 
 
 # from flask_recaptcha import ReCaptcha
-# app.config['RECAPTCHA_PUBLIC_KEY'] = RECAPTCHA_PUBLIC_KEY
-# app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY
+app.config['RECAPTCHA_PUBLIC_KEY'] = RECAPTCHA_PRIVATE_KEY_keys
+app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY_keys
 
 
 # BEWARE that postgres:/// or postgresql:/// are now deprecated and will return dialect error
@@ -173,6 +174,8 @@ def add_user():
                                User=User,
                                all_posts=all_posts,
                                form=form)
+        
+        
 
 
 @app.route("/talk/signin", methods=["POST", "GET"])
