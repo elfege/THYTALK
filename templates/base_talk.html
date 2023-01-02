@@ -14,7 +14,8 @@
   <link rel="icon" type="image/png" href="static/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="static/favicon-16x16.png" sizes="16x16" />
 
-  <script src="https://unpkg.com/axios@0.19.0/dist/axios.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.2/axios.min.js"></script>
+
   <script src="http://unpkg.com/babel-standalone"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
@@ -59,13 +60,12 @@
 
           <!-- Collapse button -->
           <button class="navbar-toggler navbar-toggler-icon"
-            style="width:45px;height:45px;position:relative;right:-50px;top:-20px" type="button" data-toggle="collapse"
+            type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
 
 
           <!-- Collapsible content -->
-          <div class="collapse navbar-collapse" id="navbarSupportedContent" {%if
-            request.MOBILE%}style="position:relative;top:-100px" {%endif%}>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <ul class="navbar-nav mr-auto mt-2 mt-xs-0">
               <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
@@ -84,10 +84,10 @@
             {%if request.MOBILE%}
             <input class="form-control" id="searchNews" type="search" placeholder="Search the news" aria-label="Search"
               style="width:100px;">
-            <button class="btn btn-primary bi bi-search" style="width:50px;display:inline-block" id="searchNewsButton"
+            <button class="btn btn-primary bi bi-search" id="searchNewsButton"
               type="submit"></button>
             {%else%}
-            <input class="form-control mr-xs-2" type="search" placeholder="Search" aria-label="Search" id="searchNews">
+            <input class="form-control mr-xs-2" type="search" placeholder="Search News" aria-label="Search" id="searchNews">
             <button class="btn btn-primary bi bi-search" id="searchNewsButton" type="submit"></button>
             {%endif%}
           </div>
@@ -344,33 +344,33 @@
 
         <!-- SIDE CONTENT RIGHT (OR BOTTOM IF MOBILE PLATFORM)-->
         {%if request.MOBILE%}<!-- BEWARE OF SHIFTED INDENTATION DUE TO JINJA CONDITION HERE: THIS IS NOT AN ANOMALY! -->
-        <div class="row" id="news_mobile" style="margin-top:10px;"><!-- NEW ROW IF MOBILE PLATFORM -->
-          <div class="col-lg-fluid">
+        <div class="row" id="news_mobile" style="margin-top:10px;" id="mainNewsDiv"><!-- NEW ROW IF MOBILE PLATFORM -->
+          <div class="col-lg-fluid" >
             {%else%}
-            <div class="col-xs-4 sidenav right">
+            <div class="col-xs-4 sidenav right" id="mainNewsDiv">
               {%endif%}
 
-              <div class="card-fluid col-xs-12" style="padding-top:50px;"> <!-- ENTIRE NEWS SECTION -->
+              <div class="card-fluid col-xs-12" style="padding-top:50px;" id="newsCardSection"  > <!-- ENTIRE NEWS SECTION -->
 
                 <!-- HEADER NEWS EXERP CARD -->
                 <div class="container-fluid">
-                  <div class="row">
+                  <div class="row" id="rowImage">
                     <!-- Featured image -->
-                    <div class="bg-image col-xs-12 imgArticle">
+                    <div class="bg-image col-xs-12 imgArticle" id="imageDiv">
                       <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
                       <a class="links" href="#!">
                         <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                       </a>
                     </div>
                   </div>
-                  <div class="row">
+                  <div class="row" id="rowPubDate">
                     <div class="col-12 text-start articlePubDate">
                       <u> {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
                     </div>
                   </div>
                   <!-- Article title and description -->
-                  <div class="row">
-                    <div class="col-12 text-start artticleDescription">
+                  <div class="row" id="rowArtDescription">
+                    <div class="col-12 text-start articleDescription">
                       <a class="links" href="{{articles[0]['url']}}" class="text-dark">
                         <h5><b>{{articles[0]['description']}}</b></h5>
                       </a>
@@ -440,7 +440,6 @@
 
 </body>
 <script src="/static/app.js"></script>
-<script src="/static/stories.js"></script>
 <script src="/static/news.js"></script>
 
 </html>

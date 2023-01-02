@@ -30,3 +30,17 @@ Data input processing:
 
 
 
+"recommendation" frameworks:
+
+look for "how to build a recommendation system" 
+
+frameworks as last resort!
+
+simpler:
+scikit learn 
+
+heavy lifting:
+pytorch 
+tensorflow 
+
+

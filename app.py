@@ -37,9 +37,19 @@ import re
 try:
     from keys import SECRET_KEY_keys, RECAPTCHA_PRIVATE_KEY_keys, RECAPTCHA_PUBLIC_KEY_keys
 except:
-    SECRET_KEY_keys="nokey"
-    RECAPTCHA_PRIVATE_KEY_keys="nokey"
-    RECAPTCHA_PUBLIC_KEY_keys="nokey"
+    SECRET_KEY_keys = "nokey"
+    RECAPTCHA_PRIVATE_KEY_keys = "nokey"
+    RECAPTCHA_PUBLIC_KEY_keys = "nokey"
+
+print(f"RECAPTCHA_PRIVATE_KEY_keys = {RECAPTCHA_PRIVATE_KEY_keys}")
+print(f"RECAPTCHA_PUBLIC_KEY_keys = {RECAPTCHA_PUBLIC_KEY_keys}")
+
+
+    
+RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
+RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY", RECAPTCHA_PRIVATE_KEY_keys)
+
+
 
 from forms import (AddUser,
                    AddComment,
@@ -57,10 +67,6 @@ Mobility(app)
 api = Api(app)
 
 
-# from flask_recaptcha import ReCaptcha
-app.config['RECAPTCHA_PUBLIC_KEY'] = RECAPTCHA_PRIVATE_KEY_keys
-app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY_keys
-
 
 # BEWARE that postgres:/// or postgresql:/// are now deprecated and will return dialect error
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
@@ -68,6 +74,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SQLALCHEMY_ECHO'] = True
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', SECRET_KEY_keys)
+app.config['RECAPTCHA_PUBLIC_KEY'] = RECAPTCHA_PUBLIC_KEY
+app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY
 
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
@@ -76,11 +84,6 @@ app.testing = True
 
 with app.app_context():
     connect_db(app)
-
-
-
-
-
 
 
 @app.route("/")
@@ -101,6 +104,12 @@ def server_error(err):
     # raise
     db.session.rollback()
     return render_template('404.html'), 404
+
+
+@app.route("/None")
+def None_Error():
+    # For some reason my app.js calls GET "/None" at some point, so until I figure this out, redirect
+    return redirect("/talk")
 
 
 @app.route("/talk")
@@ -135,48 +144,49 @@ def main_page():
 
 
 try:
-    from keys import API_KEY_keys, API_KEY_2_keys 
+    from keys import API_KEY_keys, API_KEY_2_keys
 except:
-    API_KEY_keys="nokey"
-    API_KEY_2_keys="nokey"
-    
+    API_KEY_keys = "nokey"
+    API_KEY_2_keys = "nokey"
+
+
 @app.route("/talk/api/search_news/<keyword>")
 def search_news(keyword):
-    
+
     users = User.query.all()
     form = AddUser()
     user_auth = session.get("user_id", None)
     all_posts = Post.query.all()
     saved_articles = None
-    
+
     if ("user_id" in session):
-        
+
         url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2_keys
         print(f"GET {url} ---------------------------")
+
+        resp = requests.get(url, params={
+            "lang": "us"   #,"pageSize": "20"
+        })
         
-        resp = requests.get(url, params={"lang":"us"})  
-        
-        print(f"::::::::::::::::::::::::::::::::::::::: {resp}")     
-        
-        # if resp != "200":
-        #     return jsonify(state="[]")
-        
+      
+
+        print(f"::::::::::::::::::::::::::::::::::::::: {resp.status_code}")
+
+        if resp.status_code != 200:
+            return jsonify(state="noresults")
+
         news = resp.json()
         articles = news['articles']
-        
-        # print(f"articles: {articles}")
-        
+
+        print(f"articles: {articles}")
+
         return jsonify(articles=articles)
-    
+
     else:
         return jsonify(state="loginrequired")
-    
-    
-   
-    
+
     # print(f"RESPONSE NEWS SEARCH: {resp.json()}")
-    
-    
+
 
 @app.route("/talk/signup", methods=["POST", "GET"])
 def add_user():
@@ -218,7 +228,8 @@ def add_user():
                                User=User,
                                all_posts=all_posts,
                                form=form)
- 
+
+
 @app.route("/talk/signin", methods=["POST", "GET"])
 def signin():
     """signing in"""
@@ -650,25 +661,25 @@ def news_api_req():
         articles = news['articles']
 
         for dic in articles:
-            print(
-                f"*****************************************************************************")
-            print(
-                f"                             ARTICLES BEFORE KEY CHANGE                      ")
-            print(f"{dic}")
-            print(
-                f"*****************************************************************************")
+            # print(
+            #     f"*****************************************************************************")
+            # print(
+            #     f"                             ARTICLES BEFORE KEY CHANGE                      ")
+            # print(f"{dic}")
+            # print(
+            #     f"*****************************************************************************")
 
             v = dic['urlToImage']
             del dic['urlToImage']
             dic['image'] = v
 
-            print(
-                f"*****************************************************************************")
-            print(
-                f"                             ARTICLES WITH NEW KEY                           ")
-            print(f"{dic}")
-            print(
-                f"*****************************************************************************")
+            # print(
+            #     f"*****************************************************************************")
+            # print(
+            #     f"                             ARTICLES WITH NEW KEY                           ")
+            # print(f"{dic}")
+            # print(
+            #     f"*****************************************************************************")
 
         return articles
 

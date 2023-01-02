@@ -14,6 +14,11 @@ except:
 RECAPTCHA_PUBLIC_KEY = os.environ.get("RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
 RECAPTCHA_PRIVATE_KEY = os.environ.get("RECAPTCHA_PRIVATE_KEY", RECAPTCHA_PRIVATE_KEY_keys)
 
+print(f"*************************************************************************")
+print(f"RECAPTCHA_PUBLIC_KEY = {RECAPTCHA_PUBLIC_KEY}")
+print(f"RECAPTCHA_PRIVATE_KEY = {RECAPTCHA_PRIVATE_KEY}")
+print(f"*************************************************************************")
+
 
 class AddUser(FlaskForm):
     """form that adds a new user"""
@@ -36,6 +41,9 @@ class AddUser(FlaskForm):
     img_url = StringField("Photo url",
                           validators=[Optional(), URL()],
                           )
+    
+    
+    
     recaptcha = RecaptchaField()
 
 class LoginForm(FlaskForm):
