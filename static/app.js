@@ -57,9 +57,10 @@ async function handlePostButton(e) {
             overlayOn("You must login first")     // overlay message
             $(`#${btn}`).prop("title", "Log in first") // infobulle/tooltip 
         }
-        if (resp.data.state == "alreadyliked") {  
-            overlayOn("You already liked this post")     // overlay message
-            $(`#${btn}`).prop("title", "You already liked this post")
+        if (resp.data.state == "alreadyliked") {
+            // overlayOn("You already liked this post")     // overlay message
+            // $(`#${btn}`).prop("title", "You already liked this post")
+            $(`#${btn}`).text(" " + resp.data.likes + " ")
         }
 
 
@@ -74,7 +75,7 @@ async function handlePostButton(e) {
             setTimeout(overlayOff, 800)
 
         }
-        if (resp.data.state == "alreadydisliked") {  
+        if (resp.data.state == "alreadydisliked") {
             overlayOn("You already downvoted this post")     // overlay message
             $(`#${btn}`).prop("title", "You already liked this post")
             setTimeout(overlayOff, 800)
@@ -82,9 +83,19 @@ async function handlePostButton(e) {
 
     }
     if (this.name === "flagpost" || this.name === "deletepost") {
-        await axios.delete(`/api/posts/${postId}`)
-        $(`#${html_post_container_Id}`).remove()
-        overlayOn("Post deleted!")  
+
+
+        text = "Are you sure you want to delete this post? This is irreversible!"
+        if (confirm(text) == true) {
+            await axios.delete(`/api/posts/${postId}`)
+            $(`#${html_post_container_Id}`).remove()
+            overlayOn("Post deleted!")
+        }
+        else {
+            console.log("action canceled")
+        }
+
+
     }
 
 
@@ -98,7 +109,7 @@ async function handlePostButton(e) {
             $(`#${btn}`).prop("title", "Log in first") // infobulle/tooltip 
             setTimeout(overlayOff, 800)
         }
-        if (resp.data.state == "alreadyliked") {  
+        if (resp.data.state == "alreadyliked") {
             overlayOn("You already liked this post")     // overlay message
             $(`#${btn}`).prop("title", "You already liked this post")
             setTimeout(overlayOff, 800)
@@ -113,7 +124,7 @@ async function handlePostButton(e) {
             $(`#${btn}`).prop("title", "Log in first") // infobulle/tooltip 
             setTimeout(overlayOff, 800)
         }
-        if (resp.data.state == "alreadydisliked") {  
+        if (resp.data.state == "alreadydisliked") {
             overlayOn("You already downvoted this post")     // overlay message
             $(`#${btn}`).prop("title", "You already liked this post")
             setTimeout(overlayOff, 800)
@@ -170,6 +181,21 @@ async function handleSaveButton(e) {
     }
     else if (resp.data.message === "saved") {
         overlayOn("Saved!")
+        const savedArticlesDiv = smartDevice ? $("#savedArticlesSubmenu_mobile") : $("#savedArticlesSubmenu")
+        const l = $(".savedArticles").length
+        if (smartDevice) {
+            savedArticlesDiv.append(`
+            <li>
+            <a class="savedArticles" style="font-size:smaller;color:black;" href="${art_url}" id="saved_article${l + 1}">${title}</a>
+            </li>
+            `)
+        } else {
+            savedArticlesDiv.append(`
+            <li>
+                <a class="savedArticles" href="${art_url}" id="saved_article${l + 1}">${title}</a>
+            </li>
+            `)
+        }
         setTimeout(overlayOff, 800)
     }
 
@@ -179,14 +205,14 @@ async function handleSaveButton(e) {
 
 function overlayOn(text) {
     const o = $("#overlay")
-    o.css("display","block");
+    o.css("display", "block");
     $("#OverlayText").html(text)
 
-  }
-  
-  function overlayOff() {
+}
+
+function overlayOff() {
     document.getElementById("overlay").style.display = "none";
-  }
+}
 
 
-  $( document ).ready(() => $("#subusermenu").click()) 
+$(document).ready(() => $("#subusermenu").click()) 

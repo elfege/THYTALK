@@ -41,44 +41,10 @@ class Like(db.Model):
                         primary_key=True)
 
 
-class Dislike(db.Model):
-    """store downvotes mapping user id and post id"""
-
-    __tablename__ = "dislikes"
-
-    # id = db.Column(db.Integer,
-    #                autoincrement=True,
-    #                unique=True
-    #                )
-    user_id = db.Column(db.Integer,
-                        db.ForeignKey("users.id"),
-                        primary_key=True
-                        )
-    post_id = db.Column(db.Integer,
-                        db.ForeignKey('posts.id'),
-                        primary_key=True
-                        )
-
-
 class Like_reply(db.Model):
     """store upvotes"""
 
     __tablename__ = "likes_reply"
-
-    user_id = db.Column(db.Integer,
-                        db.ForeignKey("users.id"),
-                        primary_key=True
-                        )
-
-    reply_id = db.Column(db.Integer,
-                         db.ForeignKey('responses.id'),
-                         primary_key=True)
-
-
-class Dislike_reply(db.Model):
-    """store downvotes"""
-
-    __tablename__ = "dislikes_reply"
 
     user_id = db.Column(db.Integer,
                         db.ForeignKey("users.id"),
@@ -106,6 +72,22 @@ class SavedArticle(db.Model):
 
     url = db.Column(db.String(50000))
 
+class LikedArticle(db.Model):
+    """store liked articles"""
+
+    __tablename__ = "liked_articles"
+    
+    id = db.Column(db.Integer,
+                   autoincrement=True,
+                   primary_key=True)
+
+    user_id = db.Column(db.Integer,
+                        db.ForeignKey("users.id")
+                        )
+
+    title = db.Column(db.Text)
+    
+    url = db.Column(db.Text)
 
 class User(db.Model):
     """TALK"""
@@ -157,25 +139,21 @@ class User(db.Model):
                                   secondary="likes",
                                   primaryjoin=(Like.user_id == id)
                                   )
-    disliked_posts = db.relationship('User',
-                                     secondary="dislikes",
-                                     primaryjoin=(Dislike.user_id == id)
-                                     )
+ 
     liked_replies = db.relationship('User',
                                     secondary="likes_reply",
                                     primaryjoin=(Like_reply.user_id == id)
                                     )
-    disliked_replies = db.relationship('User',
-                                       secondary="dislikes_reply",
-                                       primaryjoin=(
-                                           Dislike_reply.user_id == id)
-                                       )
-
+    
     saved_articles = db.relationship('User',
                                      secondary="savedarticles",
                                      primaryjoin=(SavedArticle.user_id == id)
                                      )
 
+    saved_articles = db.relationship('User',
+                                     secondary="liked_articles",
+                                     primaryjoin=(LikedArticle.user_id == id)
+                                     )
     @property
     def full_name(self):
         """Return full name of user."""
@@ -197,9 +175,7 @@ class User(db.Model):
             self.posts = self.posts
             self.responses = self.responses
             self.liked_posts = self.liked_posts
-            self.disliked_posts = self.disliked_posts
             self.liked_replies = self.liked_replies
-            self.disliked_replies = self.disliked_replies
             self.saved_articles = self.saved_articles
 
             hashed_pwd = bcrypt.generate_password_hash(
@@ -302,11 +278,7 @@ class Post(db.Model):
         secondary="likes",
         primaryjoin=(Like.post_id == id),
     )
-    dislikes = db.relationship(
-        "Post",
-        secondary="dislikes",
-        primaryjoin=(Dislike.post_id == id)
-    )
+   
 
     def __repr__(self):
         """Show info about user's posts."""
@@ -377,23 +349,13 @@ class Response(db.Model):
     response = db.Column(db.String(50000),
                          nullable=False)
 
-    # likes_reply = db.relationship('Like_reply',
-    #                               backref='response')
-
-    # dislikes_reply = db.relationship('Dislike_reply',
-    #                                  backref='response')
-
+  
     likes_reply = db.relationship(
         "Response",
         secondary="likes_reply",
         primaryjoin=(Like_reply.reply_id == id),
     )
-    dislikes_reply = db.relationship(
-        "Response",
-        secondary="dislikes_reply",
-        primaryjoin=(Dislike_reply.reply_id == id)
-    )
-
+ 
     response_date = db.Column(
         db.DateTime(timezone=True),
         default=datetime.utcnow

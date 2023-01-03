@@ -47,25 +47,25 @@
 /*Set up the columns with a 100% height, body color and overflow scroll*/
 
 .top {
-  background-color: rgb(227, 236, 238);
+  background-color: var(--backgroundColor);
 }
 .left{
   
-  background-color: rgb(243, 247, 248);
+  background-color: var(--backgroundColor);
   height: 100vh;
   overflow-y: scroll;
 }
 
 .right{
   
-  background-color: rgb(243, 247, 248);
+  background-color: var(--backgroundColor);
   height: 100vh;
   overflow-y: scroll;
 }
 
 .center{
   
-  background-color: rgb(243, 247, 248);
+  background-color: var(--backgroundColor);
   height: 100vh;
   overflow-y: scroll;
 }
@@ -81,10 +81,6 @@
  }
 
 
- .links {
-  color:rgb(12, 5, 68);
-  
-}
 
 /* shadow-sm p-2 bg-white rounded" */
 /* well well-lg w-100 h-100 post" */

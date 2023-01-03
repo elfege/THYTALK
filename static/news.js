@@ -38,8 +38,6 @@ async function newsSearchHandler(e) {
         setTimeout(overlayOff, 800)
     }
     else {
-
-
         const imageDiv = $(".imgArticle")
         imageDiv.empty()
         const articlePubDate = $(".articlePubDate")
@@ -68,15 +66,10 @@ async function newsSearchHandler(e) {
             $(articleDescription[i]).append(`<a class="links" href="${article.url}"><strong>${article.description}</a></strong>`)
             $(articlePubDate[i]).append(`<u>${article.publishedAt.trim("Z").replace("T", "")}</u>`)
             
-
             lastIndex = i
         }
-
         setScrollHandler()
-
-
     }
-
 }
 
 

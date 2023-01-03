@@ -18,11 +18,9 @@ import json
 from models import (db,
                     connect_db,
                     User, Post,
-                    Tag, Like,
-                    Dislike,
+                    Like,
                     Response,
                     Like_reply,
-                    Dislike_reply,
                     SavedArticle)
 
 from flask import (Flask,
@@ -113,7 +111,7 @@ def server_error(err):
 
 @app.route("/None")
 def None_Error():
-    # For some reason my app.js calls GET "/None" at some point, so until I figure this out, redirect
+    # For some reason app.js calls GET "/None" at some point, so until I figure this out, redirect
     return redirect("/talk")
 
 
@@ -126,11 +124,12 @@ def main_page():
     users = User.query.all()
     form = AddUser()
     user_auth = session.get("user_id", None)
+    user = User.query.get(user_auth)
     print(f"********************* user_auth = {user_auth}")
 
     saved_articles = None
     if ("user_id" in session):
-        user_id = User.query.get(user_auth).id
+        user_id = user.id
         saved_articles = SavedArticle.query.filter_by(user_id=user_id).all()
 
     # n = get_news("top-headlines", "breaking-news")
@@ -139,6 +138,7 @@ def main_page():
 
     return render_template("talk_home.html",
                            users=users,
+                           currentuser=user,
                            articles=news_api_req(),
                            all_posts=all_posts,
                            form=form,
@@ -159,7 +159,7 @@ def search_news(keyword):
 
     if ("user_id" in session):
 
-        url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2 
+        url = "https://newsapi.org/v2/everything?q="+keyword+"&apiKey="+API_KEY_2
         print(f"GET {url} ---------------------------")
 
         resp = requests.get(url, params={
@@ -297,11 +297,19 @@ def show_user(user_id):
             err = e.orig
             flash(f"{err}", "message label label-danger")
             db.session.rollback()
-            return render_template("user_blog.html", users=None, currentuser=user, old_posts=old_posts, form=form)
+            return render_template("user_blog.html", users=None,
+                                   currentuser=user,
+                                   old_posts=old_posts,
+                                   form=form)
 
     # make sure to display the lastest values
     old_posts = Post.get_posts_by_id(user_id)
-    return render_template("user_blog.html", users=users, User=User, currentuser=user, old_posts=old_posts, form=form)
+    return render_template("user_blog.html",
+                           users=users,
+                           User=User,
+                           currentuser=user,
+                           old_posts=old_posts,
+                           form=form)
 
 
 @app.route("/talk/users/<int:user_id>", methods=["DELETE"])
@@ -410,7 +418,6 @@ def like_post(id):
 
     user = User.query.get(session["user_id"])
 
-    print(f"**********************************already_liked_by_user ?**************************************************")
     print(f"user = {user}")
 
     # see if in 'likes' table, there's a row with user_id = user.id and post_id = id
@@ -422,6 +429,13 @@ def like_post(id):
         f"********************************already_liked_by_user ? {already_liked_by_user}*********************************")
 
     if already_liked_by_user:
+        toDelete = Like.query.filter(
+            Like.user_id == user.id, Like.post_id == id).first()
+        db.session.delete(toDelete)
+        db.session.commit()
+
+        nb_likes = Like.query.filter_by(
+            post_id=id).count()  # update with new value
         return jsonify(likes=nb_likes, state="alreadyliked")
     else:
         newData = Like(user_id=user.id, post_id=id)
@@ -432,44 +446,6 @@ def like_post(id):
 
         return jsonify(likes=nb_likes)
 
-
-@app.route("/api/posts/dislike/<int:id>", methods=["POST"])
-def dislike_post(id):
-    """API DISLIKE POSTS METHOD"""
-
-    print(f"**************************************************API DISLIKE POSTS METHOD***********************************************")
-
-    nb_dislikes = Dislike.query.filter_by(post_id=id).count()
-    print(f"********* NB DISLIKES = {nb_dislikes}")
-
-    if "user_id" not in session:
-        return jsonify(dislikes=nb_dislikes, state="loginrequired")
-
-    user = User.query.get(session["user_id"])
-
-    print(f"**********************************already_disliked_by_user ?**************************************************")
-    print(f"user = {user}")
-
-    # see if in 'dislikes' table, there's a row with user_id = user.id and post_id = id
-    l = Dislike.query
-    already_disliked_by_user = l.filter(
-        Dislike.user_id == user.id, Dislike.post_id == id).first() != None
-
-    print(
-        f"********************************already_disliked_by_user ? {already_disliked_by_user}*********************************")
-
-    if already_disliked_by_user:
-        return jsonify(dislikes=nb_dislikes, state="alreadydisliked")
-    else:
-
-        newData = Dislike(user_id=user.id, post_id=id)
-        db.session.add(newData)
-        session_commit()
-
-        nb_dislikes = Dislike.query.filter_by(
-            post_id=id).count()  # update value
-
-        return jsonify(dislikes=nb_dislikes)
 
 # /***********LIKES TO REPLIES***************************/
 
@@ -524,44 +500,6 @@ def like_reply(id):
 
         return jsonify(likes=nb_likes)
 
-
-@app.route("/api/replies/dislike/<int:id>", methods=["POST"])
-def dislike_reply(id):
-    """API DISLIKE REPLIES METHOD"""
-
-    print(f"**************************************************API DISLIKE A REPLY METHOD***********************************************")
-
-    nb_dislikes = Dislike_reply.query.filter_by(reply_id=id).count()
-    print(f"********* NB DISLIKES = {nb_dislikes}")
-
-    if "user_id" not in session:
-        return jsonify(dislikes=nb_dislikes, state="loginrequired")
-
-    user = User.query.get(session["user_id"])
-
-    print(f"**********************************already_disliked_by_user ?**************************************************")
-    print(f"user = {user}")
-
-    # see if in 'dislikes' table, there's a row with user_id = user.id and reply_id = id
-    l = Dislike_reply.query
-    already_disliked_by_user = l.filter(
-        Dislike_reply.user_id == user.id, Dislike_reply.reply_id == id).first() != None
-
-    print(
-        f"********************************already_disliked_by_user ? {already_disliked_by_user}*********************************")
-
-    if already_disliked_by_user:
-        return jsonify(dislikes=nb_dislikes, state="alreadydisliked")
-    else:
-
-        newData = Dislike_reply(user_id=user.id, reply_id=id)
-        db.session.add(newData)
-        session_commit()
-
-        nb_dislikes = Dislike_reply.query.filter_by(
-            reply_id=id).count()  # update value
-
-        return jsonify(dislikes=nb_dislikes)
 
 # ***************************REPLY TO A POST****************************
 

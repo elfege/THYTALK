@@ -75,7 +75,7 @@ post2 = Post(
     user_id=usr.id,
     post_author=usr.full_name,
     post_title="Welcome",
-    post="Here you can speak freely to whoever you may come across. With no selective algorithm, you will meet people just like you do in real life: randomly! Not just people who think like you, eat like you or listen to the same music as you.",
+    post="Here you can speak freely whith whoever you may come across. With no selective algorithm, you will meet people just like you do in real life: randomly! Not just people who think like you, eat like you or listen to the same music as you.",
     # pub_date=datetime.datetime.now
 )
 

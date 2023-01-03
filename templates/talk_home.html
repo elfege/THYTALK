@@ -50,12 +50,6 @@
                                     {{post.likes|length}}
                                 </button>
 
-                                <button id="dislikepost{{loop.index}}" data-post-id="{{post.id}}" name="dislikepost"
-                                    class="btn btn-info btn-xs dislikepost glyphicon glyphicon-thumbs-down"
-                                    style="margin-left:5px">
-                                    {{post.dislikes|length}}
-                                </button>
-
                                 {%if session["user_id"] == post.user_id%}
                                 <button id="deletepost{{loop.index}}" data-post-id="{{post.id}}" name="deletepost"
                                     class="btn btn-info btn-xs deletepost glyphicon glyphicon-trash"
@@ -102,20 +96,15 @@
                     </div>
                     {# LIKES TO REPLIES DIVISION #}
                     <div class="row">
-                        <div class="col-5 ml-auto" style="top:-15%;">
+                        <div class="col-5 d-flex justify-content-start" >
 
-                            {##}
                             <button type="submit" id="likereply{{loop.index}}" name="likereply"
                                 data-response-id="{{response.id}}"
                                 class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likereply"
-                                style="background-color:rgb(26, 33, 166)"> {{response.likes_reply|length}} </button>
-
-                            <button type="submit" id="dislikereply{{loop.index}}" name="dislikereply"
-                                data-response-id="{{response.id}}"
-                                class="btn btn-info btn-xs glyphicon glyphicon-thumbs-down dislikereply"
-                                style="background-color:rgb(26, 33, 166)"> {{response.dislikes_reply|length}} </button>
+                                style="background-color:rgb(26, 33, 166)"> {{response.likes_reply|length}} 
+                            </button>
+                           
                             {%if session["user_id"] == post.user_id%}
-
                             <button type="submit" id="deletereply{{loop.index}}" name="deletereply"
                                 data-response-id="{{response.id}}"
                                 class="btn btn-info btn-xs glyphicon glyphicon-trash deletereply"
