@@ -1,4 +1,10 @@
+
+{%if request.MOBILE%}
+{% extends "base_talk_mobile.html" %}
+{%else%}
 {% extends "base_talk.html" %}
+{%endif%}
+
 {% block title %}TALK{% endblock %}
 
 

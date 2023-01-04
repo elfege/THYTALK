@@ -8,7 +8,8 @@ from forms import (AddUser,
                    AddComment,
                    AddResponse,
                    LoginForm,
-                   UpdateUser,)
+                   UpdateUser)
+
 from news import get_news, get_news_2
 import requests
 from werkzeug.datastructures import ImmutableMultiDict
@@ -21,7 +22,8 @@ from models import (db,
                     Like,
                     Response,
                     Like_reply,
-                    SavedArticle)
+                    SavedArticle,
+                    LikedArticle)
 
 from flask import (Flask,
                    jsonify,
@@ -124,17 +126,20 @@ def main_page():
     users = User.query.all()
     form = AddUser()
     user_auth = session.get("user_id", None)
-    user = User.query.get(user_auth)
-    print(f"********************* user_auth = {user_auth}")
-
+    user = None
     saved_articles = None
+    
     if ("user_id" in session):
-        user_id = user.id
+        user=User.query.get(user_auth)
+        user_id = session["user_id"]
         saved_articles = SavedArticle.query.filter_by(user_id=user_id).all()
+        
+        
 
     # n = get_news("top-headlines", "breaking-news")
 
     all_posts = Post.query.all()
+    liked_articles = LikedArticle.query.all()
 
     return render_template("talk_home.html",
                            users=users,
@@ -143,9 +148,12 @@ def main_page():
                            all_posts=all_posts,
                            form=form,
                            User=User,
+                           user=user,
                            user_auth=user_auth,
                            Response=Response,
-                           saved_articles=saved_articles)
+                           saved_articles=saved_articles,
+                           liked_articles=liked_articles,
+                           LikedArticle=LikedArticle)
 
 
 @app.route("/talk/api/search_news/<keyword>")
@@ -248,15 +256,8 @@ def signin():
             user_auth = User.query.get_or_404(user.id)
             print(f"user_auth::::::::::::::::::::::::::::::: {user_auth}")
 
-            return render_template("talk_home.html",
-                                   users=users,
-                                   articles=news_api_req(),
-                                   all_posts=all_posts,
-                                   form=form,
-                                   currentuser=user,
-                                   user_auth=user_auth,
-                                   User=User,
-                                   Response=Response)
+            return redirect(url_for("main_page"))
+           
 
         else:
             form.username.errors = ["WRONG NAME/PASSWORD"]

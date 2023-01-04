@@ -6,7 +6,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta
     keywords="Freedom of expression, real conversations, freedom of speech, chat free, free chat, politics, spirtituality, religion, arts, entertainment, conversation, smart people,
-  be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, independents, independence, free speech, different people, meet, be with, find">
+be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, independents, independence, free speech, different people, meet, be with, find">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <link rel="stylesheet" href="/static/app.css">
   <link rel="stylesheet" href="/static/bootstrap.css">
@@ -34,11 +34,10 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
   <script src="https://www.google.com/recaptcha/enterprise.js?render=6LeK_pwjAAAAAEu3ycWXYOJLfz4hF7MG2emkvIAt"></script>
 
-
-
-  <title>{% block title %}THY TALK{% endblock %}</title>
+  <title>
+    {% block title %}THY TALK{% endblock %}
+  </title>
 </head>
-
 
 <body>
 
@@ -46,11 +45,10 @@
     <div id="OverlayText"></div>
   </div>
 
-
   <div class="container bg-light">
     <div class="row">
       <div class="col-xs-2 navbar-light bg-light" style="padding-left: 0px;  padding-right: 0px;">
-        <a class="links" href="/" style>
+        <a class="links" href="/" style="style">
           <img class="img-fluid" src="{{url_for('static', filename='logo.jpg')}}" />
 
         </a>
@@ -63,40 +61,40 @@
           <button class="navbar-toggler navbar-toggler-icon" type="button" data-toggle="collapse"
             data-target="#navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"></button>
 
-
           <!-- Collapsible content -->
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
 
             <ul class="navbar-nav mr-auto mt-2 mt-xs-0">
-              <li class="nav-item"><a class="nav-link" href="/">HOME</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/">HOME</a>
+              </li>
               {%if "user_id" in session %}
-              <li class="nav-item"><a class="nav-link" href="/talk/signout">SIGN OUT</a></li>
-              <li class="nav-item"><a class="nav-link" href="/talk/savedarticles">SAVED</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/talk/signout">SIGN OUT</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/talk/savedarticles">SAVED</a>
+              </li>
               {%else%}
-              <li class="nav-item"><a class="nav-link" href="/talk/signup">SIGN UP</a></li>
-              <li class="nav-item"><a class="nav-link" href="/talk/signin">SIGN IN</a></li>
+              <li class="nav-item">
+                <a class="nav-link" href="/talk/signup">SIGN UP</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="/talk/signin">SIGN IN</a>
+              </li>
               {%endif%}
-              <!-- <form action="/talk" method="POST">
-                                <button type="submit" class="btn btn-primary btn-xs btn-block"></button>
-                            </form> -->
             </ul>
-
-            {%if request.MOBILE%}
-            <input class="form-control" id="searchNews" type="search" placeholder="Search the news" aria-label="Search"
-              style="width:100px;">
-            <button class="btn btn-primary bi bi-search" id="searchNewsButton" type="submit"></button>
-            {%else%}
             <input class="form-control mr-xs-2" type="search" placeholder="Search News" aria-label="Search"
               id="searchNews">
             <button class="btn btn-primary bi bi-search" id="searchNewsButton" type="submit"></button>
-            {%endif%}
+
           </div>
         </nav>
       </div>
 
       <!-- USERS (formerly 'side content') -->
       <!-- USERS LIST (NO MOBILE DEVICE) -->
-      {%if not request.MOBILE%}
+
       <div class="container-fluid col-xs-2 left">
         <nav id="sidebar">
 
@@ -148,7 +146,6 @@
                 </li>
                 {%endif%}
 
-
                 <!-- ALL OTHER USERS -->
                 {%if users%}
 
@@ -163,7 +160,7 @@
                   <div class="row">
                     <div class="col-xs-4">
 
-                      <a {%if session["user_id"]==user.id%} href="/talk/{{ user.id }}" {% else %} href="#" {%endif%}>
+                      <a {%if session["user_id"]==user.id%} href="#" {% else %} {%endif%}>
                         {% if user.img_url %}
                         <img src="{{user.img_url}}" class="img-fluid" width="50px">
                         {%else%}
@@ -211,279 +208,136 @@
               </ul>
           </ul>
 
-
         </nav>
       </div>
-      <!-- USERS (MOBILE PLATFORMS) -->
-      {%else%}     
-
-      <div id="mySidebar" class="container sidebar"> {#class="container-fluid col-xs-2 sidenav sidebar left">#}
-        <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">
-          ×
-        </a>
-
-        <!-- CURRENTLY LOGGED IN USER (MOBILE PLATFORMS)-->
-        {%if currentuser%}
-        <div class="row">
-          <div class="col-lg-2">
-            <div class="row">
-
-              <a style="font-size:large;color:rgb(3, 2, 2)">{{ currentuser.name }}</a>
-              <a {%if session['user_id']==currentuser.id%} href="/talk/{{ currentuser.id }}" {% else %} href="#"
-                {%endif%}>
-                {% if currentuser.img_url %}
-                <img src="{{currentuser.img_url}}" class="img-fluid max-width:30%">
-                {%else%}
-                <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" />
-                {% endif %}
-              </a>
-
-            </div>
-            <div class="row">
-              <div class="container">
-                <div class="row">
-                  <div class="col-lg-6">
-                    <button type="submit" formaction="/talk/chat/{{currentuser.id}}"
-                      class="btn btn-info btn-xs bi bi-chat">
-                    </button>
-
-
-                  </div>
-                  {%if session["user_id"] == currentuser.id%} {# a bit redundent but keep it out of extra precaution #}
-                  <div class="col-lg-6">
-                    <form>
-                      <button type="submit" formaction="/talk/edit/{{currentuser.id}}"
-                        class="btn btn-info btn-xs-1 glyphicon glyphicon-edit">
-                      </button>
-                    </form>
-                  </div>
-                  <br>
-                  <br>
-                  <hr>
-                  <br>
-                  {%endif%}
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        {%endif%}
-
-        <!-- ALL OTHER USERS (MOBILE PLATFORMS)-->
-        {%if users%}
-
-        {% for user in users %}
-        {% if user != currentuser %}
-        <div class="row">
-          <div class="col-lg-2">
-            <div class="row">
-
-
-              <a style="font-size:large;color:rgb(9, 8, 7);">{{ user.name }}</a>
-              <a {%if session["user_id"]==user.id%} href="/talk/{{ user.id }}" {% else %} href="#" {%endif%}>
-                {% if user.img_url %}
-                <img src="{{user.img_url}}" class="img-fluid max-width:30%">
-                {%else%}
-                <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" />
-                {% endif %}
-              </a>
-
-            </div>
-            <div class="row">
-
-              <button type="submit" formaction="/talk/chat/{{user.id}}" class="btn btn-info btn-xs bi bi-chat">
-              </button>
-
-              </form>
-            </div>
-          </div>
-        </div>
-        <br>
-        {%endif%}
-        {% endfor %}
-
-        {%endif%}
-
-        <!-- SAVED ARTICLES (MOBILES) -->
-
-        <div class="row">
-          <button class="btn-sm btn-light w-100" href="#savedArticlesSubmenu_mobile" data-toggle="collapse"
-            aria-expanded="false" id="savedArticlesSubmenu_mobile_btn">SAVED ARTICLES</button>
-          <ul class="collapse" id="savedArticlesSubmenu_mobile">
-            {%if saved_articles%}
-            {%for saved_art in saved_articles%}
-            <li>
-              <a class="savedArticles" style="font-size:smaller;color:black;" href="{{saved_art.url}}"
-                id="saved_article{{loop.index}}">{{saved_art.title}}</a>
-            </li>
-            <hr>
-            {%endfor%}
-            {%endif%}
-          </ul>
-        </div>
-
-      </div>
-
-
-      {%endif%}
 
       <!-- END USERS AND ARTICLES-->
 
-
       <!-- MAIN CONTENT -->
-      {%if not
-      request.MOBILE%}<!-- BEWARE OF SHIFTED INDENTATION DUE TO JINJA CONDITION HERE: THIS IS NOT AN ANOMALY! -->
+
       <div class="col-xs-6 center">
 
-        {%else%}
-        <div class="row">
-          <div class="container">
-            <div class="row">
-              <div class="col-xs-6" style="position:relative;left:-10px">
-                <button class="btn-lg btn-primary glyphicon glyphicon-menu-left" onclick="openNav()"></button>
+        <div class=" row">
+          <!-- ***********************FLASH******************************** -->
+          {% with messages = get_flashed_messages(with_categories = true) %}
+          {% if messages %}
+          <div class="container-fluid">
+            <div class="row .row-height justify-content-center">
+              <div class="col-xs-12" style="text-align: center;">
+
+                <ul>
+                  {% for category, message in messages %}
+                  <li class="{{ category }}">{{ message }}</li>
+                  {#categories are CSS classes to be styled
+                  in
+                  app.css! #}
+                  {% endfor %}
+                </ul>
+
               </div>
-              <div class="col-xs-6">
-                <button class="btn-lg btn-primary" id="newsBtn" onclick="window.location.href='#news_mobile';"">NEWS</button>
             </div>
           </div>
-        </div><!--  THIS IDENTATION IS NOT AN ANOMALY! -->
-
-        <div class=" col-xs-12 center">
-
-                  <br>
-                  {%endif%}
-                  <div class=" row">
-                    <!-- ***********************FLASH******************************** -->
-                    {% with messages = get_flashed_messages(with_categories=true) %}
-                    {% if messages %}
-                    <div class="container-fluid">
-                      <div class="row .row-height justify-content-center">
-                        <div class="col-xs-12" style="text-align: center;">
-
-                          <ul>
-                            {% for category, message in messages %}
-                            <li class="{{ category }}">{{ message }}</li> {#categories are CSS classes to be styled in
-                            app.css! #}
-                            {% endfor %}
-                          </ul>
-
-                        </div>
-                      </div>
-                    </div>
-                    {% endif %}
-                    {% endwith %}
-                    <!-- ***********************END OF FLASH******************************** -->
-                    <br>
-                  </div>
-                  <div class="row mt-5">
-                    {% block content %}{% endblock %}
-                  </div>
-              </div>
-              <!-- END OF MAIN CONTENT -->
-
-
-
-              <!-- NEWS -->
-
-              {%if articles%}
-
-
-              <!-- SIDE CONTENT RIGHT (OR BOTTOM IF MOBILE PLATFORM)-->
-              {%if
-              request.MOBILE%}<!-- BEWARE OF SHIFTED INDENTATION DUE TO JINJA CONDITION HERE: THIS IS NOT AN ANOMALY! -->
-              <div class="row" id="news_mobile" style="margin-top:10px;" id="mainNewsDiv">
-                <!-- NEW ROW IF MOBILE PLATFORM -->
-                <div class="col-lg-12">
-                  {%else%}
-                  <div class="col-xs-4 sidenav right" id="mainNewsDiv">
-                    {%endif%}
-
-                    <div class="card-fluid col-xs-12" style="padding-top:50px;" id="newsCardSection">
-                      <!-- ENTIRE NEWS SECTION -->
-
-                      <!-- HEADER NEWS EXERP CARD -->
-                      <div class="container-fluid">
-                        <div class="row" id="rowImage">
-                          <!-- Featured image -->
-                          <div class="bg-image col-xs-12 imgArticle" id="imageDiv">
-                            <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
-                            <a class="links" href="#!">
-                              <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
-                            </a>
-                          </div>
-                        </div>
-                        <div class="row" id="rowPubDate">
-                          <div class="col-12 text-start articlePubDate">
-                            <u> {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
-                          </div>
-                        </div>
-                        <!-- Article title and description -->
-                        <div class="row" id="rowArtDescription">
-                          <div class="col-12 text-start articleDescription">
-                            <a class="links" href="{{articles[0]['url']}}" class="text-dark">
-                              <h5><b>{{articles[0]['description']}}</b></h5>
-                            </a>
-                          </div>
-                        </div>
-                      </div>
-
-                      <hr />
-
-                      <!-- SMALL NEWS CARDS -->
-
-                      {%for article in articles%}
-                      {%if article['title'] != articles[0]['title']%}
-
-                      <div class="row mb-4 border-bottom pb-2">
-
-                        <div class="col-fluid imgArticle">
-                          <img src="{{article['image']}}" class="img-fluid float-left" alt="" />
-                        </div>
-
-                        <div class="col-fluid artticleDescription">
-                          <p class="h6"><a class="links"
-                              href="{{article['url']}}"><strong>{{article['description']}}</a></strong></p>
-                          <div class="articlePubDate">
-                            <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
-                          </div>
-                        </div>
-
-                        <div class="col-fluid">
-                          <button class="btn glyphicon glyphicon-save savearticle_cls" id="savearticle{{loop.index}}"
-                            data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
-                        </div>
-                      </div>
-                      {%endif%}
-                      {%endfor%}
-
-
-                    </div>
-                    <!-- News block -->
-                  </div>
-                </div>
-                {%if request.MOBILE%} {# if mobile row, we have an extra <div></div> to close #}
-              </div> <!-- end of conditional (mobile) row -->
-            </div>
-            {%endif%}
-            {%endif%}
-            <!-- END OF NEWS -->
-            <!-- END OF SIDE CONTENT -->
-
-
-
-
-          </div>
-          {#
-          {%if not request.MOBILE%}
-          <footer style="background-color: #ffede7;">
-
-            <div class="text p-12" style="background-color: rgba(239, 221, 221, 0.2);">
-              <a style="color:grey" href="/">© 2022 Copyright: - elfege.com</a>
-            </div>
-          </footer>
-          {%endif%}
-          #}
+          {% endif %}
+          {% endwith %}
+          <!-- ***********************END OF FLASH******************************** -->
+          <br>
         </div>
+        <div class="row mt-5">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+      <!-- END OF MAIN CONTENT -->
+
+      <!-- NEWS -->
+
+      {%if articles%}
+      <div class="col-xs-4 sidenav right" id="mainNewsDiv">
+
+        <div class="card-fluid col-xs-12" style="padding-top:50px;" id="newsCardSection">
+          <!-- ENTIRE NEWS SECTION -->
+
+          <!-- HEADER NEWS EXERP CARD -->
+          <div class="container-fluid">
+            <div class="row" id="rowImage">
+              <!-- Featured image -->
+              <div class="bg-image col-xs-12 imgArticle" id="imageDiv">
+                <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
+                <a class="links" href="#!">
+                  <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
+                </a>
+              </div>
+            </div>
+            <div class="row" id="rowPubDate">
+              <div class="col-12 text-start articlePubDate">
+                <u>{{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+              </div>
+            </div>
+            <!-- Article title and description -->
+            <div class="row" id="rowArtDescription">
+              <div class="col-12 text-start articleDescription">
+                <a class="text-dark" href="{{articles[0]['url']}}">
+                  <h5>
+                    <b>{{articles[0]['description']}}</b>
+                  </h5>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- SMALL NEWS CARDS -->
+
+          {%for article in articles%}
+          {%if article['title'] != articles[0]['title']%}
+
+          <div class="row mb-4 border-bottom pb-2">
+
+            <div class="col-fluid imgArticle">
+              <img src="{{article['image']}}" class="img-fluid float-left" alt="" />
+            </div>
+
+            <div class="col-fluid artticleDescription">
+              <p class="h6">
+                <a class="links" href="{{article['url']}}">
+                  <strong>{{article['description']}}</a>
+                </strong>
+              </p>
+              <div class="articlePubDate">
+                <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+              </div>
+            </div>
+
+            <div class="col-fluid">
+              <button class="btn glyphicon glyphicon-save savearticle_cls" id="savearticle{{loop.index}}"
+                data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
+            </div>
+            {%if currentuser and LikedArticle%}
+            {%if session['user_id']==currentuser.id%}
+            <div class="col-fluid">
+              <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
+                class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
+                data-placement="top" title="" style="margin-left:5px">
+                {{LikedArticle.query.filter(LikedArticle.user_id==user.id, LikedArticle.title=="{{article['title']}}",
+                LikedArticle.url=="{{article['url']}}").all()|length}}
+              </button>
+            </div>
+            {%endif%}
+            {%endif%}
+
+            {%endif%}
+            {%endfor%}
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    {%endif%}
+    <!-- END OF NEWS -->
+    <!-- END OF SIDE CONTENT -->
+
+  </div>
 
 </body>
 <script src="/static/app.js"></script>

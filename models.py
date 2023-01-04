@@ -150,7 +150,7 @@ class User(db.Model):
                                      primaryjoin=(SavedArticle.user_id == id)
                                      )
 
-    saved_articles = db.relationship('User',
+    liked_articles = db.relationship('User',
                                      secondary="liked_articles",
                                      primaryjoin=(LikedArticle.user_id == id)
                                      )

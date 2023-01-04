@@ -1,6 +1,10 @@
+{%if request.MOBILE%}
+{% extends "base_talk_mobile.html" %}
+{%else%}
 {% extends "base_talk.html" %}
-{% block title %}TALK{% endblock %}
+{%endif%}
 
+{% block title %}TALK{% endblock %}
 
 
 
@@ -30,5 +34,13 @@
         </button>
     </span>
 </form>
+
 {%endblock%}
 {# END OF MAIN CONTENT #}
+
+
+{%if request.MOBILE%}
+<script>
+$("div").remove()
+</script>
+{%endif%}
