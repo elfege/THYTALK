@@ -12,8 +12,7 @@
 {% block content %}
 
 {% if session["user_id"] %}
-<h6>You are logged in as {{User.query.get(session["user_id"]).name}} {{User.query.get(session["user_id"]).last_name}}
-</h6>
+<h6 style="position:relative;margin:auto;width:50%;">You are logged in as {{User.query.get(session["user_id"]).name}}</h6>
 {%endif%}
 {#{% for user in users %}#}
 {% for post in all_posts|reverse %}

@@ -1,3 +1,7 @@
+:root{
+    --logocolor:rgb(14,18,123);
+}
+
 h1 {
     color: rgb(46, 46, 76);
 }
@@ -58,5 +62,15 @@ li {
     padding-right: 50px;
     padding-bottom: 50px;
     padding-left: 50px;
+}
+
+.color-logo {
+    background-color: var(--logocolor) !important;
+}
+
+#menu-button-mobile {
+    position:relative;
+    width:76% !important;
+    color:white;
 }
 

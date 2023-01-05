@@ -8,9 +8,8 @@
     keywords="Freedom of expression, real conversations, freedom of speech, chat free, free chat, politics, spirtituality, religion, arts, entertainment, conversation, smart people,
 be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, independents, independence, free speech, different people, meet, be with, find">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <link rel="stylesheet" href="/static/app.css">
-  <link rel="stylesheet" href="/static/bootstrap.css">
-  <link rel="stylesheet" href="/static/sidebar_mobile.css">
+  <!-- <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/bootstrap.css"> -->
 
   <link rel="icon" type="image/png" href="static/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="static/favicon-16x16.png" sizes="16x16" />
@@ -45,16 +44,17 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
     <div id="OverlayText"></div>
   </div>
 
-  <div class="container bg-light">
+  <div class="container bg-light" id="masterContainer"> <!-- MASTER CONTAINER -->
+
+    <!-- TOP COLLAPSIBLE NAVBAR -->
     <div class="row">
       <div class="col-xs-2 navbar-light bg-light" style="padding-left: 0px;  padding-right: 0px;">
         <a class="links" href="/" style="style">
           <img class="img-fluid" src="{{url_for('static', filename='logo.jpg')}}" />
-
         </a>
       </div>
-      <div class="col-xs-10 top">
 
+      <div class="col-xs-10 top">
         <nav class="navbar navbar-expand-sm navbar-light static-top d-flex justify-content-end ">
 
           <!-- Collapse button -->
@@ -72,9 +72,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               <li class="nav-item">
                 <a class="nav-link" href="/talk/signout">SIGN OUT</a>
               </li>
-              <li class="nav-item">
-                <a class="nav-link" href="/talk/savedarticles">SAVED</a>
-              </li>
               {%else%}
               <li class="nav-item">
                 <a class="nav-link" href="/talk/signup">SIGN UP</a>
@@ -91,11 +88,16 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
           </div>
         </nav>
       </div>
+    </div>
+    <!-- END OF NAVBAR -->
 
-      <!-- USERS (formerly 'side content') -->
-      <!-- USERS LIST (NO MOBILE DEVICE) -->
+    <!-- USERS (formerly 'side content') -->
+    <!-- USERS LIST (NO MOBILE DEVICE) -->
 
-      <div class="container-fluid col-xs-2 left">
+    <div class="row"> <!-- MASTER ROW THAT SEPARATES TOP NAVBAR FROM THE REST -->
+      <!-- LEFT SIDEBAR -->
+
+      <div class="col-xs-2 left"> <!-- USERS AND ARTICLES COLUMN -->
         <nav id="sidebar">
 
           <ul class="list-unstyled components">
@@ -146,6 +148,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                 </li>
                 {%endif%}
 
+
                 <!-- ALL OTHER USERS -->
                 {%if users%}
 
@@ -160,7 +163,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   <div class="row">
                     <div class="col-xs-4">
 
-                      <a {%if session["user_id"]==user.id%} href="#" {% else %} {%endif%}>
+                      <a {%if session["user_id"]==user.id%} href="/talk/{{ user.id }}" {% else %} href="#" {%endif%}>
                         {% if user.img_url %}
                         <img src="{{user.img_url}}" class="img-fluid" width="50px">
                         {%else%}
@@ -191,7 +194,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                 {%endif%}
               </ul>
             </li>
-            <!-- SAVED ARTICLES (NOT MOBILE)-->
+            <!-- SAVED ARTICLES -->
             <li>
               <button class="btn-lg btn-light w-100" href="#savedArticlesSubmenu" data-toggle="collapse"
                 aria-expanded="false">SAVED ARTICLES</button>
@@ -208,15 +211,15 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               </ul>
           </ul>
 
-        </nav>
-      </div>
 
-      <!-- END USERS AND ARTICLES-->
+        </nav>
+      </div><!-- END OF USERS AND ARTICLES-->
+      <!-- END OF LEFT SIDEBAR -->
 
       <!-- MAIN CONTENT -->
+      <div class="col-xs-6" id="mainContent"> <!-- MASTER CENTER COLUMN -->
 
-      <div class="col-xs-6 center">
-
+        <!-- FLASH AND CENTER CONTENT -->
         <div class=" row">
           <!-- ***********************FLASH******************************** -->
           {% with messages = get_flashed_messages(with_categories = true) %}
@@ -224,7 +227,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
           <div class="container-fluid">
             <div class="row .row-height justify-content-center">
               <div class="col-xs-12" style="text-align: center;">
-
                 <ul>
                   {% for category, message in messages %}
                   <li class="{{ category }}">{{ message }}</li>
@@ -233,7 +235,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   app.css! #}
                   {% endfor %}
                 </ul>
-
               </div>
             </div>
           </div>
@@ -241,103 +242,108 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
           {% endwith %}
           <!-- ***********************END OF FLASH******************************** -->
           <br>
-        </div>
-        <div class="row mt-5">
-          {% block content %}{% endblock %}
-        </div>
+          <div class="row">
+            {% block content %}{% endblock %}
+          </div>
+        </div> <!-- END OF MAIN CENTER CONTENT ROW (still inside master center column)-->
       </div>
-      <!-- END OF MAIN CONTENT -->
 
       <!-- NEWS -->
-
       {%if articles%}
-      <div class="col-xs-4 sidenav right" id="mainNewsDiv">
+      <div class="col-xs-4 sidenav right" id="mainNewsDiv"> <!-- MASTER NEWS COLUMN -->
 
-        <div class="card-fluid col-xs-12" style="padding-top:50px;" id="newsCardSection">
-          <!-- ENTIRE NEWS SECTION -->
+        <div class="card-fluid col-fluid" id="newsCardSection"> <!-- NEWS CARDS SECTION -->
 
-          <!-- HEADER NEWS EXERP CARD -->
-          <div class="container-fluid">
+          <div class="container-fluid"> <!-- HEADER NEWS EXERP CARD CONTAINER -->
+
             <div class="row" id="rowImage">
+
               <!-- Featured image -->
-              <div class="bg-image col-xs-12 imgArticle" id="imageDiv">
-                <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
+              <div class="col-fluid imgArticle" id="imageDiv">
+                <img src="{{articles[0]['image']}}" class="img-fluid" max-width="20%" />
                 <a class="links" href="#!">
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
               </div>
+
             </div>
+
             <div class="row" id="rowPubDate">
-              <div class="col-12 text-start articlePubDate">
-                <u>{{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+
+              <div class="col-fluid articlePubDate">
+                <u>
+                  {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
+
             </div>
             <!-- Article title and description -->
+
             <div class="row" id="rowArtDescription">
-              <div class="col-12 text-start articleDescription">
+
+              <div class="col-fluid artticleDescription">
                 <a class="text-dark" href="{{articles[0]['url']}}">
                   <h5>
                     <b>{{articles[0]['description']}}</b>
                   </h5>
                 </a>
               </div>
+
             </div>
-          </div>
+
+          </div> <!-- END OF HEADER NEWS EXERP CARD CONTAINER -->
 
           <hr />
+          <br>
 
-          <!-- SMALL NEWS CARDS -->
+          <div class="container p-0" style="width:auto;">
+            <!-- ALL OTHER NEWS CARDS CONTAINER -->
+            {%for article in articles%}
+            {%if article['title'] != articles[0]['title']%}
 
-          {%for article in articles%}
-          {%if article['title'] != articles[0]['title']%}
 
-          <div class="row mb-4 border-bottom pb-2">
+            <div class="row" style="width:auto;"> <!-- IMAGE ROW -->
+              <div class="col-fluid imgArticle" style="width:auto;">
+                <img src="{{article['image']}}" class="image-fluid" width="80%" alt="" />
 
-            <div class="col-fluid imgArticle">
-              <img src="{{article['image']}}" class="img-fluid float-left" alt="" />
-            </div>
-
-            <div class="col-fluid artticleDescription">
-              <p class="h6">
-                <a class="links" href="{{article['url']}}">
-                  <strong>{{article['description']}}</a>
-                </strong>
-              </p>
-              <div class="articlePubDate">
+                    <p class="h6">
+                      <a class="links" href="{{article['url']}}">
+                        <strong>{{article['description']}}</a>
+                      </strong>
+                    </p>
+             
                 <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
             </div>
 
-            <div class="col-fluid">
-              <button class="btn glyphicon glyphicon-save savearticle_cls" id="savearticle{{loop.index}}"
-                data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"></button>
+            <div class="row mb-4 border-bottom pb-2">
+              <div class="col-8 d-flex justify-content-end">
+                <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
+                  data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
+              </div>
+              {%if currentuser and LikedArticle%}
+              {%if session['user_id']==currentuser.id%}
+              <div class="col-4 d-flex justify-content-end">
+                <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
+                  class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
+                  data-placement="top" title="" style="margin-left:5px">
+                  {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
+                  LikedArticle.title=="{{article['title']}}",
+                  LikedArticle.url=="{{article['url']}}").all()|length}}
+                </button>
+              </div>
+              {%endif%}
+              {%endif%}
             </div>
-            {%if currentuser and LikedArticle%}
-            {%if session['user_id']==currentuser.id%}
-            <div class="col-fluid">
-              <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
-                class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
-                data-placement="top" title="" style="margin-left:5px">
-                {{LikedArticle.query.filter(LikedArticle.user_id==user.id, LikedArticle.title=="{{article['title']}}",
-                LikedArticle.url=="{{article['url']}}").all()|length}}
-              </button>
-            </div>
-            {%endif%}
-            {%endif%}
-
             {%endif%}
             {%endfor%}
-          </div>
-        </div>
-      </div>
-    </div>
+          </div> <!-- END OF ALL OTHER NEWS CARDS CONTAINER -->
+        </div><!-- END OF NEWS CARDS SECTION -->
+      </div><!-- END OF MASTER NEWS COLUMN -->
+      {%endif%}
 
+    </div><!-- END OF MASTER ROW -->
 
-    {%endif%}
-    <!-- END OF NEWS -->
-    <!-- END OF SIDE CONTENT -->
-
-  </div>
+  </div> <!-- END OF MASTER CONTAINER -->
 
 </body>
 <script src="/static/app.js"></script>

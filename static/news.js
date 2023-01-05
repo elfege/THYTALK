@@ -2,7 +2,7 @@
 
 $("#searchNews").on('keypress', function (e) {
     if (e.which == 13) {
-        newsSearchHandler()
+        newsSearchHandler(e)
     }
 })
 
@@ -70,6 +70,7 @@ async function newsSearchHandler(e) {
         }
         setScrollHandler()
     }
+    
 }
 
 
