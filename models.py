@@ -90,7 +90,7 @@ class LikedArticle(db.Model):
     url = db.Column(db.Text)
 
 class User(db.Model):
-    """TALK"""
+    """Create a list of users with attributes"""
 
     __tablename__ = "users"
 

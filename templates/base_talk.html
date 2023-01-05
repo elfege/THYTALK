@@ -49,7 +49,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
     <!-- TOP COLLAPSIBLE NAVBAR -->
     <div class="row">
       <div class="col-xs-2 navbar-light bg-light" style="padding-left: 0px;  padding-right: 0px;">
-        <a class="links" href="/" >
+        <a class="links" href="/">
           <img class="img-fluid" src="{{url_for('static', filename='logo.jpg')}}" />
         </a>
       </div>
@@ -292,24 +292,21 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               <div class="col-fluid imgArticle" style="width:auto;">
                 <img src="{{article['image']}}" class="image-fluid" width="80%" alt="" />
 
-                    <p class="h6">
-                      <a class="links" href="{{article['url']}}">
-                        <strong>{{article['description']}}</a>
-                      </strong>
-                    </p>
-             
+                <p class="h6">
+                  <a class="links" href="{{article['url']}}">
+                    <strong>{{article['description']}}</a>
+                  </strong>
+                </p>
+
                 <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
             </div>
 
             <div class="row mb-4 border-bottom pb-2">
-              <div class="col-8 d-flex justify-content-end">
-                <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
-                  data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
-              </div>
-              {%if currentuser and LikedArticle%}
+
+              {%if currentuser%}
               {%if session['user_id']==currentuser.id%}
-              <div class="col-4 d-flex justify-content-end">
+              <div class="col-2 d-flex justify-content-end">
                 <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
                   class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
                   data-placement="top" title="" style="margin-left:5px">
@@ -318,8 +315,21 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   LikedArticle.url=="{{article['url']}}").all()|length}}
                 </button>
               </div>
+
               {%endif%}
               {%endif%}
+
+
+              <div class="col-8 d-flex justify-content-end">
+                <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
+                  data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
+
+              </div>
+              <div class="col-2 d-flex justify-content-end">
+                <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost" type="submit"></button>
+              </div>
+
+
             </div>
             {%endif%}
             {%endfor%}

@@ -11,8 +11,18 @@
 {% block content %}
 
 {% if session["user_id"] %}
-<h6 style="position:relative;margin:auto;width:50%;">You are logged in as {{User.query.get(session["user_id"]).name}}
-</h6>
+<div class="row">
+    <div class="col-xs-6">
+        <h6>You are logged in as {{User.query.get(session["user_id"]).name}}</h6>
+    </div>
+    <div class="col-xs-6 mb-4">
+        <form action="/talk/{{session['user_id']}}">
+            <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost"
+                type="submit"></button>
+        </form>
+    </div>
+</div>
+
 {%endif%}
 {#{% for user in users %}#}
 {% for post in all_posts|reverse %}
@@ -23,9 +33,10 @@
 
             <div class="media-body">
 
-                <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded" id="post{{post.id}}">
+                <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded text-wrap" id="post{{post.id}}">
 
                     <div class="container-fluid">
+                      
                         <div class="row">
                             <div class="col-xs-2">
                                 {% if User.query.get(post.user_id).img_url %}
@@ -38,6 +49,7 @@
                                 <h5><span class="glyphicon glyphicon-time"></span> Posted by
                                     {{post.post_author}} -
                                     {{post.pub_date}}</h5>
+                                    {{post.title}}
 
                                 {{post.post}}
                             </div>
@@ -72,9 +84,7 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
-
             </div>
         </div>
     </div>
@@ -82,7 +92,7 @@
 
     {# REPLYS DIVISION #}
 
-    {% for response in post.responses%}
+    {% for response in post.responses|reverse%}
     <div class="row d-flex justify-content-end mb-4 p-0" id="response{{response.id}}">
         <div class="col-10">
 
@@ -97,9 +107,10 @@
                     </div>
                     {# LIKES TO REPLIES DIVISION #}
                     <div class="row">
+
                         <div class="col-5 d-flex justify-content-start">
 
-                            <button type="submit" id="likereply{{loop.index}}" name="likereply"
+                            <button type="submit" id="likereply{{loop.index}}-{{post.id}}" name="likereply"
                                 data-response-id="{{response.id}}"
                                 class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likereply"
                                 style="background-color:rgb(26, 33, 166)"> {{response.likes_reply|length}}

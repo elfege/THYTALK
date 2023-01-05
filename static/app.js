@@ -99,32 +99,47 @@ async function handlePostButton(e) {
 
     }
 
-    if(this.name === "replypost"){
+    if (this.name === "replypost") {
         // const resp = await axios.post(``)
-        
+
         const action = 'post.id'
         const formLabel = 'form.hidden_tag()'
-        
-            
-        const form = `
-        <div class="col-12">
-            <form action="/api/reply/${postId}" method="POST">
 
-                <textarea name="response" rows="4" cols="40"></textarea>
-                
-                
-                <span class="input-group-btn">
-                    <button type="submit" class="btn btn-default" type="button">
-                        <span class="glyphicon glyphicon-send"></span> Submit </button>
-                    </button>
-                </span>
-            </form>
-        </div>
+
+        const form = `
+            <div class="container mb-5">
+                <div class="row">
+                <form action="/api/reply/${postId}" method="POST">
+                    <div class="col-xs-8">
+                        
+
+                            <textarea rows="4" cols="50" name="response"></textarea>
+                            
+                    </div>
+                    <div class="col-xs-2">      
+                            <button type="submit" onclick="submit()" class="btn btn-default" type="button">
+                                <span class="glyphicon glyphicon-send"></span> Submit </button>
+                            </button>
+                    </div>
+                    
+                    </form>
+                </div>
+                <div class="row">
+                    
+                    <div class="col-xs-6">
+                            <button class="btn btn-default" onclick="location.reload()">
+                                <span class="glyphicon glyphicon-remove-sign"></span> Cancel </button>
+                            </button>
+                            
+                    </div>
+                </div>
+            </div>
+
         `
-        
-        $(`#${html_postId}`).parent().append(`<div class="col-8 d-flex justify-content-end" id="ReplyDiv">`) 
+
+        $(`#${html_postId}`).parent().parent().parent().append(`<div class="row ml-5" id="ReplyDiv">`)
         $("#ReplyDiv").append(form)
-        
+
     }
 
 
@@ -132,6 +147,8 @@ async function handlePostButton(e) {
     if (this.name == "likereply") {
         const resp = await axios.post(`/api/replies/like/${responseId}`)
         console.log("response: ", resp.data)
+        console.log("resp.data.likes => ", resp.data.likes)
+        console.log("resp.data.state => ", resp.data.state)
         $(`#${btn}`).text(" " + resp.data.likes + " ")
         if (resp.data.state == "loginrequired") {
             overlayOn("You must login first")     // overlay message
@@ -139,9 +156,11 @@ async function handlePostButton(e) {
             setTimeout(overlayOff, 800)
         }
         if (resp.data.state == "alreadyliked") {
-            overlayOn("You already liked this post")     // overlay message
-            $(`#${btn}`).prop("title", "You already liked this post")
-            setTimeout(overlayOff, 800)
+            console.log("deleting like to this reply")
+            // overlayOn("You already liked this post")     // overlay message
+            // $(`#${btn}`).prop("title", "You already liked this post")
+            // setTimeout(overlayOff, 800)
+            $(`#${btn}`).text(" " + resp.data.likes + " ")
         }
     }
     if (this.name === "dislikereply") {

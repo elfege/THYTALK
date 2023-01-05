@@ -211,6 +211,9 @@ def add_user():
         img_url = form.img_url.data
         username = form.username.data
         password = form.password.data
+        does_nop_already_exists = (User.query.filter(User.username == username).first() == None 
+                                  and (User.query.filter(User.name == name).first() == None
+                                  and User.query.filter(User.last_name == last_name) == None))
 
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
         print(f"name: {name}")
@@ -218,15 +221,26 @@ def add_user():
         print(f"img_url: {img_url}")
         print(f"username: {username}")
         print(f"password: {password}")
+        print(f"does_nop_already_exists: {does_nop_already_exists}")
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+        
+        
 
-        User.register(name=name, last_name=last_name,
-                      img_url=img_url, username=username, password=password)
-
-        return redirect(url_for("main_page"))
+        if does_nop_already_exists:            
+            User.register(name=name, last_name=last_name,
+                        img_url=img_url, username=username, password=password)
+            return redirect(url_for("signin"))
+        
+        else:
+            if User.query.filter(User.username == username).first() != None:
+                form.username.errors = [f"The user name '{username}' already exists"]
+            if User.query.filter(User.name == name).first() != None and User.query.filter(User.last_name == last_name) != None:
+                form.name.errors = [f"The user '{name} {last_name}' already exists"]
+            
     else:
         print(f"--------------------------ADDING USER------------------------------------")
-        return render_template("user_form.html",
+    
+    return render_template("user_form.html",
                                users=users,
                                articles=news_api_req(),
                                User=User,
@@ -246,19 +260,17 @@ def signin():
 
         user = User.authenticate(username, password)
 
-        print(f"user::::::::::::::::::::::::::::::::::: {user}")
-        print(f"password::::::::::::::::::::::::::::::: {password}")
-
         if user:
             all_posts = Post.query.all()
             session["user_id"] = user.id  # keep logged in
             users = User.query.all()
             user_auth = User.query.get_or_404(user.id)
-            print(f"user_auth::::::::::::::::::::::::::::::: {user_auth}")
 
             return redirect(url_for("main_page"))
            
 
+        elif User.query.filter(User.username == username).first() == None:
+            form.username.errors = ["THIS ACCOUNT DOES NOT EXIST"]
         else:
             form.username.errors = ["WRONG NAME/PASSWORD"]
 
@@ -302,6 +314,7 @@ def show_user(user_id):
                                    currentuser=user,
                                    old_posts=old_posts,
                                    form=form)
+        return redirect(url_for("main_page"))
 
     # make sure to display the lastest values
     old_posts = Post.get_posts_by_id(user_id)
@@ -405,7 +418,6 @@ def delete_post(id):
     session_commit()
     return jsonify(message="deleted")
 
-
 @app.route("/api/posts/like/<int:id>", methods=["POST"])
 def like_post(id):
     """API LIKE POSTS METHOD"""
@@ -490,6 +502,20 @@ def like_reply(id):
         f"********************************already_liked_by_user ? {already_liked_by_user}*********************************")
 
     if already_liked_by_user:
+        toDelete = Like_reply.query.filter(
+            Like_reply.user_id == user.id, Like_reply.reply_id == id).first()
+        
+        print(f"*********************************************************************")
+        print()
+        print(f"                    toDelete:{toDelete}                              ")
+        print()
+        print(f"*********************************************************************")
+        
+        db.session.delete(toDelete)
+        db.session.commit()
+
+        nb_likes = Like_reply.query.filter_by(
+            reply_id=id).count()  # update with new value
         return jsonify(likes=nb_likes, state="alreadyliked")
     else:
         newData = Like_reply(user_id=user.id, reply_id=id)
