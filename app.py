@@ -514,7 +514,7 @@ def answer(post_id):
         return redirect("/")
 
     # form = AddUser()
-    form = AddResponse()
+    # form = AddResponse()
     users = User.query.all()
     all_posts = Post.query.all()
 
@@ -522,24 +522,27 @@ def answer(post_id):
 
     user = post.user_id
 
-    if form.validate_on_submit():
-        response = form.response.data
-        author = User.query.get(session["user_id"]).name
+    # if form.validate_on_submit():
+    
+    response = request.form["response"]
+    
+    author = User.query.get(session["user_id"]).name
 
-        print(f"user id: {user}")
-        new_reply = Response(user_id=user, post_id=post_id,
-                             reply_author=author, response=response)
+    print(f"user id: {user}")
+    new_reply = Response(user_id=user, post_id=post_id,
+                            reply_author=author, response=response)
 
-        db.session.add(new_reply)
-        session_commit()
+    db.session.add(new_reply)
+    session_commit()
 
-        return redirect(url_for("main_page"))
+    return redirect(url_for("main_page"))
 
     post_id_form = post_id
 
     user_auth = session.get("user_id", None)
 
-    return render_template("reply_form.html", form=form, post=post)
+    return redirect(url_for("main_page"))
+    # return render_template("reply_form.html", form=form, post=post)
 
 
 def session_commit():

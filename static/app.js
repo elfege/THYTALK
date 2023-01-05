@@ -25,7 +25,7 @@ $(".likereply").click(handlePostButton)
 $(".dislikereply").click(handlePostButton)
 $(".deletereply").click(handlePostButton)
 $(".flagreply").click(handlePostButton)
-// $(".replypost").click(handlePostButton)
+$(".replypost").click(handlePostButton)
 
 async function handlePostButton(e) {
     e.preventDefault();
@@ -38,6 +38,7 @@ async function handlePostButton(e) {
     let postId = $(`#${btn}`).attr("data-post-id") // sql id
     let html_post_container_Id = `post_container${postId}` // html doc id of the post's container
     let html_postId = `post${postId}` //html doc id of the post itself
+    console.log("html_postId => ", html_postId)
 
     let responseId = $(`#${btn}`).attr("data-response-id")
     let html_responseId = `response${responseId}`
@@ -96,6 +97,34 @@ async function handlePostButton(e) {
         }
 
 
+    }
+
+    if(this.name === "replypost"){
+        // const resp = await axios.post(``)
+        
+        const action = 'post.id'
+        const formLabel = 'form.hidden_tag()'
+        
+            
+        const form = `
+        <div class="col-12">
+            <form action="/api/reply/${postId}" method="POST">
+
+                <textarea name="response" rows="4" cols="40"></textarea>
+                
+                
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon-send"></span> Submit </button>
+                    </button>
+                </span>
+            </form>
+        </div>
+        `
+        
+        $(`#${html_postId}`).parent().append(`<div class="col-8 d-flex justify-content-end" id="ReplyDiv">`) 
+        $("#ReplyDiv").append(form)
+        
     }
 
 

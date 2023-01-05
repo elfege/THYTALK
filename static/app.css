@@ -1,15 +1,13 @@
 :root {
+    --sidebarwidth:200px;
+    --backgroundColor: rgb(243, 247, 248);
     --logocolor: rgb(14, 18, 123);
 }
-
 
 .col:before {
     border: 3px solid var(--logocolor);
    
 }
-
-
-
 
 
 
