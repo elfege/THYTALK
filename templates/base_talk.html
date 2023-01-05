@@ -8,8 +8,8 @@
     keywords="Freedom of expression, real conversations, freedom of speech, chat free, free chat, politics, spirtituality, religion, arts, entertainment, conversation, smart people,
 be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, independents, independence, free speech, different people, meet, be with, find">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-  <!-- <link rel="stylesheet" href="/static/app.css">
-  <link rel="stylesheet" href="/static/bootstrap.css"> -->
+  <link rel="stylesheet" href="/static/app.css">
+  <link rel="stylesheet" href="/static/bootstrap.css">
 
   <link rel="icon" type="image/png" href="static/favicon-32x32.png" sizes="32x32" />
   <link rel="icon" type="image/png" href="static/favicon-16x16.png" sizes="16x16" />
@@ -265,21 +265,14 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
               </div>
-
             </div>
-
             <div class="row" id="rowPubDate">
-
               <div class="col-fluid articlePubDate">
-                <u>
-                  {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+                <u>{{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
-
             </div>
             <!-- Article title and description -->
-
             <div class="row" id="rowArtDescription">
-
               <div class="col-fluid artticleDescription">
                 <a class="text-dark" href="{{articles[0]['url']}}">
                   <h5>
@@ -287,20 +280,14 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   </h5>
                 </a>
               </div>
-
             </div>
-
           </div> <!-- END OF HEADER NEWS EXERP CARD CONTAINER -->
-
           <hr />
           <br>
-
           <div class="container p-0" style="width:auto;">
             <!-- ALL OTHER NEWS CARDS CONTAINER -->
             {%for article in articles%}
             {%if article['title'] != articles[0]['title']%}
-
-
             <div class="row" style="width:auto;"> <!-- IMAGE ROW -->
               <div class="col-fluid imgArticle" style="width:auto;">
                 <img src="{{article['image']}}" class="image-fluid" width="80%" alt="" />

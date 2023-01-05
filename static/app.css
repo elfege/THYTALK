@@ -1,6 +1,19 @@
-:root{
-    --logocolor:rgb(14,18,123);
+:root {
+    --logocolor: rgb(14, 18, 123);
 }
+
+
+.col:before {
+    border: 3px solid var(--logocolor);
+   
+}
+
+
+
+
+
+
+/*********************************************/
 
 h1 {
     color: rgb(46, 46, 76);
@@ -11,22 +24,19 @@ li {
     display: inline;
 }
 
-@media only screen and (max-width: 800px) {
-
-
-}
+@media only screen and (max-width: 800px) {}
 
 .messages {
     position: relative;
     /* left:50%;
     right:50%; */
-    color:rgb(14, 14, 65);
+    color: rgb(14, 14, 65);
     font-size: 20px;
     text-transform: capitalize;
     transform: translate(-50%, -50%);
     -ms-transform: translate(-50%, -50%);
     background-color: rgb(206, 213, 221);
-   
+
     padding-right: 10px;
     padding-bottom: 10px;
     padding-left: 10px;
@@ -69,8 +79,7 @@ li {
 }
 
 #menu-button-mobile {
-    position:relative;
-    width:76% !important;
-    color:white;
+    position: relative;
+    width: 76% !important;
+    color: white;
 }
-
