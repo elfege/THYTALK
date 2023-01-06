@@ -254,13 +254,13 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
 
         <div class="card-fluid col-fluid" id="newsCardSection"> <!-- NEWS CARDS SECTION -->
 
-          <div class="container-fluid"> <!-- HEADER NEWS EXERP CARD CONTAINER -->
-
+          <div class="container p-0" style="width:auto;">
+            <!-- ALL NEWS CARDS CONTAINER -->
+            {%for article in articles%}
             <div class="row" id="rowImage">
-
               <!-- Featured image -->
               <div class="col-fluid imgArticle" id="imageDiv">
-                <img src="{{articles[0]['image']}}" class="img-fluid" max-width="20%" />
+                <img src="{{article['image']}}" class="img-fluid" max-width="20%" />
                 <a class="links" href="#!">
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
@@ -268,40 +268,21 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
             </div>
             <div class="row" id="rowPubDate">
               <div class="col-fluid articlePubDate">
-                <u>{{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+                <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
             </div>
             <!-- Article title and description -->
             <div class="row" id="rowArtDescription">
               <div class="col-fluid articleDescription">
-                <a class="text-dark" href="{{articles[0]['url']}}">
+                <a class="text-dark" href="{{article['url']}}">
                   <h5>
-                    <b>{{articles[0]['description']}}</b>
+                    <b>{{article['description']}}</b>
                   </h5>
                 </a>
               </div>
             </div>
-          </div> <!-- END OF HEADER NEWS EXERP CARD CONTAINER -->
-          <hr />
-          <br>
-          <div class="container p-0" style="width:auto;">
-            <!-- ALL OTHER NEWS CARDS CONTAINER -->
-            {%for article in articles%}
-            {%if article['title'] != articles[0]['title']%}
-            <div class="row" style="width:auto;"> <!-- IMAGE ROW -->
-              <div class="col-fluid imgArticle" style="width:auto;">
-                <img src="{{article['image']}}" class="image-fluid" width="80%" alt="" />
-
-                <p class="h6">
-                  <a class="links" href="{{article['url']}}">
-                    <strong>{{article['description']}}</a>
-                  </strong>
-                </p>
-
-                <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
-              </div>
-            </div>
-
+            
+            <!-- SAVE AND LIKE ARTICLE BUTTONS -->
             <div class="row mb-4 border-bottom pb-2">
 
               {%if currentuser and LikedArticle%}
@@ -336,7 +317,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
 
 
             </div>
-            {%endif%}
             {%endfor%}
           </div> <!-- END OF ALL OTHER NEWS CARDS CONTAINER -->
         </div><!-- END OF NEWS CARDS SECTION -->

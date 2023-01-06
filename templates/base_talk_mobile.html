@@ -270,106 +270,83 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
           <div class="card-fluid col-xs-12" style="padding-top:50px;" id="newsCardSection"> <!-- MASTER NEWS COLUMN -->
 
 
-            <div class="container-fluid"> <!-- HEADER NEWS EXERP CARD CONTAINER -->
 
+            <div class="container"> <!-- ALL NEWS CARDS CONTAINER -->
+
+              {%for article in articles%}
               <div class="row" id="rowImage">
                 <!-- Featured image -->
-                <div class="bg-image col-xs-12 imgArticle" id="imageDiv">
-                  <img src="{{articles[0]['image']}}" class="img-fluid" max-width="100%" />
+                <div class="col-fluid imgArticle" id="imageDiv">
+                  <img src="{{article['image']}}" class="img-fluid" max-width="20%" />
                   <a class="links" href="#!">
                     <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                   </a>
                 </div>
               </div>
               <div class="row" id="rowPubDate">
-                <div class="col-12 text-start articlePubDate">
-                  <u>
-                    {{articles[0]['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
+                <div class="col-fluid articlePubDate">
+                  <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
                 </div>
               </div>
               <!-- Article title and description -->
               <div class="row" id="rowArtDescription">
-                <div class="col-12 text-start articleDescription">
-                  <a class="text-dark" href="{{articles[0]['url']}}">
+                <div class="col-fluid articleDescription">
+                  <a class="text-dark" href="{{article['url']}}">
                     <h5>
-                      <b>{{articles[0]['description']}}</b>
+                      <b>{{article['description']}}</b>
                     </h5>
                   </a>
                 </div>
               </div>
-            </div> <!-- END OF HEADER NEWS EXERP CARD CONTAINER -->
 
-            <hr />
-            <br>
-
-            <div class="container"> <!-- ALL OTHER NEWS CARDS CONTAINER -->
-
-              {%for article in articles%}
-              {%if article['title'] != articles[0]['title']%}
+              <!-- SAVE AND LIKE ARTICLE BUTTONS -->
               <div class="row mb-4 border-bottom pb-2">
-                <div class="col-fluid imgArticle">
-                  <img src="{{article['image']}}" class="img-fluid float-left" alt="" />
+
+                {%if currentuser and LikedArticle%}
+                {%if session['user_id']==currentuser.id%}
+                <div class="col-2 d-flex justify-content-end">
+                  <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
+                    class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
+                    data-placement="top" title="" style="margin-left:5px">
+                    {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
+                    LikedArticle.title=="{{article['title']}}",
+                    LikedArticle.url=="{{article['url']}}").all()|length}}
+                  </button>
                 </div>
-                <div class="col-12 artticleDescription">
-                  <p class="h6">
-                    <a class="links" href="{{article['url']}}">
-                      <strong>{{article['description']}}</a>
-                    </strong>
-                  </p>
-                  <div class="articlePubDate">
-                    <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
-                  </div>
-                </div>
 
-                <!-- SAVE AND LIKE ARTICLE BUTTONS -->
-                <div class="row mb-4 border-bottom pb-2">
-
-                  {%if currentuser and LikedArticle%}
-                  {%if session['user_id']==currentuser.id%}
-                  <div class="col-2 d-flex justify-content-end">
-                    <button id="likearticle{{loop.index}}" data-art-id="{{article.id}}" name="likearticle"
-                      class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
-                      data-placement="top" title="" style="margin-left:5px">
-                      {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
-                      LikedArticle.title=="{{article['title']}}",
-                      LikedArticle.url=="{{article['url']}}").all()|length}}
-                    </button>
-                  </div>
-
-                  <div class="col-8 d-flex justify-content-end">
-                    <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
-                      data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
-
-                  </div>
-                  <div class="col-2 d-flex justify-content-end">
-                    <button class="btn btn-primary glyphicon glyphicon-pencil commentArticle"
-                      id="commentArticle{{loop.index}}" name="commentArticle" data-article-url="{{article['url']}}"
-                      data-article-title="{{article['title']}}" data-article-imgurl="{{article['image']}}"
-                      data-userid="{{currentuser.id}}" data-article-description="{{article['description']}}">
-                    </button>
-                  </div>
-
-                  {%endif%}
-                  {%endif%}
-
+                <div class="col-8 d-flex justify-content-end">
+                  <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
+                    data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
 
                 </div>
+                <div class="col-2 d-flex justify-content-end">
+                  <button class="btn btn-primary glyphicon glyphicon-pencil commentArticle"
+                    id="commentArticle{{loop.index}}" name="commentArticle" data-article-url="{{article['url']}}"
+                    data-article-title="{{article['title']}}" data-article-imgurl="{{article['image']}}"
+                    data-userid="{{currentuser.id}}" data-article-description="{{article['description']}}">
+                  </button>
+                </div>
+
                 {%endif%}
-                {%endfor%}
+                {%endif%}
+
+
               </div>
+              {%endfor%}
             </div>
           </div>
-          {%endif%} <!-- END OF NEWS & BOTTOM CONTENT -->
+        </div>
+        {%endif%} <!-- END OF NEWS & BOTTOM CONTENT -->
 
 
 
 
 
 
-        </div> <!-- END OF MASTER CENTER COLUMN -->
+      </div> <!-- END OF MASTER CENTER COLUMN -->
 
-      </div> <!-- END OF MASTER ROW THAT SEPARATES TOP NAVBAR FROM THE REST-->
-    </div> <!-- END OF MASTER CONTAINER -->
+    </div> <!-- END OF MASTER ROW THAT SEPARATES TOP NAVBAR FROM THE REST-->
+  </div> <!-- END OF MASTER CONTAINER -->
 
   </div>
 
