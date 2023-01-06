@@ -184,7 +184,10 @@ async function handlePostButton(e) {
        
         $(`#news_post`).removeAttr("hidden")       
 
-        
+        if(smartDevice){
+            window.location.href='#news_post'
+        }
+
 
     }
 }
