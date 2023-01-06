@@ -81,6 +81,7 @@ app.config['RECAPTCHA_PRIVATE_KEY'] = RECAPTCHA_PRIVATE_KEY
 app.config['API_KEY'] = API_KEY
 app.config['API_KEY_2'] = API_KEY_2_keys
 
+app.config['SQLALCHEMY_ECHO'] = False
 
 app.config["DEBUG_TB_INTERCEPT_REDIRECTS"] = False
 
@@ -277,8 +278,8 @@ def signin():
     return render_template("user_login.html", form=form)
 
 
-@app.route("/talk/<int:user_id>", methods=["POST", "GET"])
-def show_user(user_id):
+@app.route("/talk/post/<int:user_id>", methods=["POST", "GET"])
+def post(user_id):
     """Show info on a single user and allow them to post new comments"""
     if "user_id" not in session:
         flash("Please, log in first...", "alert alert-dark")
@@ -325,6 +326,52 @@ def show_user(user_id):
                            old_posts=old_posts,
                            form=form)
 
+@app.route("/talk/post_news/<int:user_id>", methods=["POST", "GET"])
+def post_news(user_id):
+    """Create a new post with news content"""
+    
+    user = User.query.get_or_404(user_id)
+    
+    article_title = request.form['commentNewsTitleValue']
+    article_url = request.form['commentNewsURL_Value']
+    article_imgurl = request.form['commentNewsImageValue']
+    article_description = request.form['commentNewsDescriptionValue']
+    
+    articleComment = request.form['articleComment']
+    post_title = article_title
+    
+    print(f"****************************************************")
+    print()
+    print(f"article_title: {article_title}")
+    print(f"article_url: {article_url}")
+    print(f"article_imgurl: {article_imgurl}")
+    print(f"article_description: {article_description}")
+    print(f"articleComment: {articleComment}")
+    print()
+    print(f"****************************************************")
+    
+    new_post = Post(
+            user_id=user_id,
+            post_author=user.full_name,
+            post_title=post_title,
+            article_title = article_title,
+            article_url  = article_url,
+            article_imgurl = article_imgurl,
+            article_description = article_description,            
+            post=articleComment
+        )
+
+    db.session.add(new_post)
+
+    try:
+        db.session.commit()
+    except Exception as e:
+        err = e.orig
+        flash(f"{err}", "message label label-danger")
+        db.session.rollback()
+            
+    return redirect(url_for("main_page"))
+    
 
 @app.route("/talk/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):

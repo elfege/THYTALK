@@ -249,7 +249,7 @@ class Post(db.Model):
     )
 
     post_title = db.Column(
-        db.String(60),
+        db.Text(),
         nullable=False,
     )
 
@@ -263,6 +263,24 @@ class Post(db.Model):
         db.DateTime(timezone=True),
         default=datetime.utcnow
     )
+    
+    article_title = db.Column(
+        db.Text(),
+        nullable=True
+    )
+    article_url = db.Column(
+        db.Text(),
+        nullable=True
+    )
+    article_imgurl = db.Column(
+        db.Text(),
+        nullable=True
+    )
+    article_description = db.Column(
+        db.Text(),
+        nullable=True
+    )
+    
 
     tags = db.relationship('Tag',
                            backref='posts')

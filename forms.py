@@ -67,6 +67,18 @@ class AddComment(FlaskForm):
                             )
     recaptcha = RecaptchaField()
 
+# class CommentOnNews(FlaskForm):
+#      commentNewsTitleCol = StringField("Title",
+#                              validators=[
+#                                  InputRequired(), Length(min=5, max=30)]
+#                              )
+#     post_content = TextAreaField("Comment",
+#                                validators=[InputRequired(), Length(
+#                                    min=5, max=30000)],
+#                                widget=TextArea()
+#                             )
+#     recaptcha = RecaptchaField()
+
 class AddResponse(FlaskForm):
     """form that add a response to a post"""
     response = StringField('Response',

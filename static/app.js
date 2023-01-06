@@ -26,25 +26,34 @@ $(".dislikereply").click(handlePostButton)
 $(".deletereply").click(handlePostButton)
 $(".flagreply").click(handlePostButton)
 $(".replypost").click(handlePostButton)
+$(".commentArticle").click(handlePostButton)
 
 async function handlePostButton(e) {
     e.preventDefault();
-
-    console.log("this.name = ", this.name)
-
+        
+    
     const btn = this.id
-    console.log("btn -----------> ", btn)
-
-    let postId = $(`#${btn}`).attr("data-post-id") // sql id
-    let html_post_container_Id = `post_container${postId}` // html doc id of the post's container
-    let html_postId = `post${postId}` //html doc id of the post itself
-    console.log("html_postId => ", html_postId)
-
-    let responseId = $(`#${btn}`).attr("data-response-id")
-    let html_responseId = `response${responseId}`
-
-    console.log("responseID = ", responseId)
-    console.log("html_responseId = ", html_responseId)
+    const postId = $(`#${btn}`).attr("data-post-id") // sql id
+    //distinction sql/html id is needed to dynamically add replies' divs/forms before submit
+    const sql_post_container_Id = `post_container${postId}` // sql based dom id of the post container
+    console.log("sql_post_container_Id ----->", sql_post_container_Id)
+    const html_post_container_Id = $(`#${sql_post_container_Id}`).attr("data-html-id") // data attr based html id
+    const html_postId = `post${postId}` // (both html and sql id of the post)    
+    const responseId = $(`#${btn}`).attr("data-response-id")
+    const html_responseId = `response${responseId}`
+    
+    
+    console.log("********************************************")
+    console.log()
+    console.log("this.name ---------------------->", this.name)
+    console.log("btn ---------------------------->", btn)
+    console.log("html_postId -------------------->", html_postId)
+    console.log("responseID --------------------->", responseId)
+    console.log("sql_post_container_Id ---------->", sql_post_container_Id)
+    console.log("html_post_container_Id --------->", sql_post_container_Id)
+    console.log("html_responseId ---------------->", html_responseId)
+    console.log()
+    console.log("********************************************")
 
     /* POST LIKES DISLIKES AND DELETE */
     if (this.name === "likepost") {
@@ -89,7 +98,7 @@ async function handlePostButton(e) {
         text = "Are you sure you want to delete this post? This is irreversible!"
         if (confirm(text) == true) {
             await axios.delete(`/api/posts/${postId}`)
-            $(`#${html_post_container_Id}`).remove()
+            $(`#${sql_post_container_Id}`).remove()
             overlayOn("Post deleted!")
         }
         else {
@@ -100,48 +109,15 @@ async function handlePostButton(e) {
     }
 
     if (this.name === "replypost") {
-        // const resp = await axios.post(``)
+        
+        $(`#replyDiv${postId}`).removeAttr("hidden")
 
-        const action = 'post.id'
-        const formLabel = 'form.hidden_tag()'
+        $(`#replySubmitBtn${postId}`).click(()=> {
+            $(`#replyDiv${postId}`).attr("hidden", "true")
+        })
 
-
-        const form = `
-            <div class="container mb-5">
-                <div class="row">
-                <form action="/api/reply/${postId}" method="POST">
-                    <div class="col-xs-8">
-                        
-
-                            <textarea rows="4" cols="50" name="response"></textarea>
-                            
-                    </div>
-                    <div class="col-xs-2">      
-                            <button type="submit" onclick="submit()" class="btn btn-default" type="button">
-                                <span class="glyphicon glyphicon-send"></span> Submit </button>
-                            </button>
-                    </div>
-                    
-                    </form>
-                </div>
-                <div class="row">
-                    
-                    <div class="col-xs-6">
-                            <button class="btn btn-default" onclick="location.reload()">
-                                <span class="glyphicon glyphicon-remove-sign"></span> Cancel </button>
-                            </button>
-                            
-                    </div>
-                </div>
-            </div>
-
-        `
-
-        $(`#${html_postId}`).parent().parent().parent().append(`<div class="row ml-5" id="ReplyDiv">`)
-        $("#ReplyDiv").append(form)
 
     }
-
 
     /* REPLIES LIKES / DISLIKES / TRASH / FLAG */
     if (this.name == "likereply") {
@@ -181,6 +157,35 @@ async function handlePostButton(e) {
     if (this.name === "flagreply" || this.name === "deletereply") {
         await axios.delete(`/api/replies/${responseId}`)
         $(`#${html_responseId}`).remove()
+    }
+
+    if (this.name === "commentArticle") {
+
+        const button = $(`#${btn}`)
+
+        const title = button.attr("data-article-title")
+        const url = button.attr("data-article-url")
+        const imgurl = button.attr("data-article-imgurl")
+        const description = button.attr("data-article-description")
+    
+        console.log("title:", title)
+        console.log("url:", url)
+        console.log("img:", imgurl)
+        console.log("img:", description)
+
+        $("#commentNewsTitle").text(title)
+        $("#commentNewsImage").attr("src", imgurl)        
+        $("#commentNewsDescription").text(description)
+
+        $("#commentNewsTitleValue").val(title)
+        $("#commentNewsURL_Value").val(url)
+        $("#commentNewsImageValue").val(imgurl)
+        $("#commentNewsDescriptionValue").val(description)
+       
+        $(`#news_post`).removeAttr("hidden")       
+
+        
+
     }
 }
 
@@ -261,6 +266,8 @@ function overlayOn(text) {
 function overlayOff() {
     document.getElementById("overlay").style.display = "none";
 }
+
+
 
 
 $(document).ready(() => $("#subusermenu").click()) 

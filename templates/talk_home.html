@@ -16,42 +16,102 @@
         <h6>You are logged in as {{User.query.get(session["user_id"]).name}}</h6>
     </div>
     <div class="col-xs-6 mb-4">
-        <form action="/talk/{{session['user_id']}}">
-            <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost"
-                type="submit"></button>
+        <form action="/talk/post/{{session['user_id']}}">
+            <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost" type="submit"></button>
         </form>
     </div>
 </div>
 
+
+<!-- HIDDEN NEWS POST DIVISION -->
+<div hidden class="row ml-5 mb-5 news_post" id="news_post">
+    <div class="container">
+        <div class="col-fluid">
+            <form action="/talk/post_news/{{session['user_id']}}" method="POST">
+                <input hidden type="text" value="" id="commentNewsTitleValue" name="commentNewsTitleValue">
+                <input hidden type="text" value="" id="commentNewsURL_Value" name="commentNewsURL_Value">
+                <input hidden type="text" value="" id="commentNewsImageValue" name="commentNewsImageValue">
+                <input hidden type="text" value="" id="commentNewsDescriptionValue" name="commentNewsDescriptionValue">
+
+
+                <div class="row" id="commentNewsTitleRow" name="commentNewsTitleRow">
+                    <div class="col-fluid" id="commentNewsTitleCol" name="commentNewsTitleCol">
+                        <a href="" id="commentNewsTitle" name="commentNewsTitle">Article Title</a>
+                    </div>
+                </div>
+                <div class="row" id="commentNewsImageRow" name="commentNewsImageRow">
+                    <div class="col-fluid" id="commentNewsImageCol" name="commentNewsImageCol">
+                        <img src="" class="img-fluid" max-width="20%" id="commentNewsImage" name="commentNewsImage" />
+                    </div>
+                </div>
+                <div class="row" id="commentNewsDescriptionRow" name="commentNewsDescriptionRow">
+                    <div class="col-fluid">
+                        <p id="commentNewsDescription" name="commentNewsDescription">Article Description</p>
+                    </div>
+                </div>
+                <div class="row">
+
+                    <div class="col-fluid">
+                        <textarea rows="4" cols="50" name="articleComment"></textarea>
+                    </div>
+                    <div class="col-fluid">
+                        <button type="submit" onclick="submit()" class="btn btn-default glyphicon glyphicon-send"
+                            type="button">
+                            Submit
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 {%endif%}
+
+
 {#{% for user in users %}#}
 {% for post in all_posts|reverse %}
-<div class="container-fluid " id="post_container{{post.id}}">
-    {# POSTS DIVISION #}
-    <div class="row">
+
+{#make sure to update js if you change these attributes#}
+<div class="container-fluid post_main_container" id="post_container{{post.id}}" data-html-id="{{loop.index}}">
+
+
+
+    <!-- REGULAR POSTS DIVISION -->
+    <div class="row post_row">{#make sure to update js if you change these attributes#}
+
         <div class="col-lg-fluid">
 
             <div class="media-body">
 
+                {#make sure to update js if you change these attributes#}
                 <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded text-wrap" id="post{{post.id}}">
 
                     <div class="container-fluid">
-                      
+
                         <div class="row">
                             <div class="col-xs-2">
                                 {% if User.query.get(post.user_id).img_url %}
-                                <a href="/talk/{{ User.query.get(post.user_id).id }}"><img
+                                <a href="/talk/post/{{ User.query.get(post.user_id).id }}"><img
                                         src="{{User.query.get(post.user_id).img_url}}" class="img-fluid"
                                         width="50px"></a>
                                 {% endif %}
                             </div>
                             <div class="col-xs-10">
                                 <h5><span class="glyphicon glyphicon-time"></span> Posted by
-                                    {{post.post_author}} -
-                                    {{post.pub_date}}</h5>
-                                    {{post.title}}
+                                    {{post.post_author}} - {{post.pub_date}}
+                                    <p>{{post.title}}</p>
+                                </h5>
+                                
+                                {%if post.article_title%}
+                                <p><a href="{{post.article_url}}">{{post.article_title}}</a></p>
+                                <p><img src="{{post.article_imgurl}}" class="img-fluid" width="100px"/></p>
+                                <p>{{post.article_description}}</p>
+                                <p></p>
+                                {%endif%}
 
                                 {{post.post}}
+
                             </div>
                         </div>
 
@@ -61,7 +121,8 @@
 
                                 <button id="likepost{{loop.index}}" data-post-id="{{post.id}}" name="likepost"
                                     class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likepost"
-                                    data-toggle="tooltip" data-placement="top" title="" style="margin-left:5px"> {#empty
+                                    data-toggle="tooltip" data-placement="top" title="" style="margin-left:5px">
+                                    {#empty
                                     tooltip 'title'
                                     attr = tooltip doesn't show#}
                                     {{post.likes|length}}
@@ -85,9 +146,44 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
+    <!-- HIDDEN REPLY DIVISION -->
+    <div hidden class="row reply_row" id="replyDiv{{post.id}}">
+        <div class="container mb-5">
+            <form action="/api/reply/{{post.id}}" method="POST">
+                <div class="row">
+                    <div class="col-fluid">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col-fluid">
+
+                                    <textarea rows="4" cols="50" name="response"></textarea>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <button type="submit" class="btn btn-default" type="button">
+                                        <span class="glyphicon glyphicon-send" id="replySubmitBtn{{post.id}}">
+                                            Submit
+                                        </span>
+                                    </button>
+
+                                    <button class="btn btn-default" onclick="location.reload()">
+                                        <span class="glyphicon glyphicon-remove-sign"></span> Cancel </button>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
 
 
     {# REPLYS DIVISION #}
