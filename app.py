@@ -212,22 +212,30 @@ def add_user():
         img_url = form.img_url.data
         username = form.username.data
         password = form.password.data
-        does_nop_already_exists = (User.query.filter(User.username == username).first() == None 
-                                  and (User.query.filter(User.name == name).first() == None
-                                  and User.query.filter(User.last_name == last_name) == None))
+        
+        username_does_not_exist = User.query.filter(User.username == username).first() == None
+        name_does_not_exist =  User.query.filter(User.name == name).first() == None    
+        last_name_does_not_exist = User.query.filter(User.last_name == last_name) == None
+        
+        user_does_not_already_exists = username_does_not_exist == True and (name_does_not_exist == True or last_name_does_not_exist == True)
 
+        print(f"User.query.filter(User.username == username).first() == None ---------------------> {username_does_not_exist}")
+        print(f"User.query.filter(User.name == name).first() == None -----------------------------> {name_does_not_exist}")
+        print(f"User.query.filter(User.last_name == last_name).first() == None -------------------> {last_name_does_not_exist}")
+              
+        
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
         print(f"name: {name}")
         print(f"last_name: {last_name}")
         print(f"img_url: {img_url}")
         print(f"username: {username}")
         print(f"password: {password}")
-        print(f"does_nop_already_exists: {does_nop_already_exists}")
+        print(f"user_does_not_already_exists: {user_does_not_already_exists}")
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
         
         
 
-        if does_nop_already_exists:            
+        if user_does_not_already_exists:            
             User.register(name=name, last_name=last_name,
                         img_url=img_url, username=username, password=password)
             return redirect(url_for("signin"))
