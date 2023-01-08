@@ -34,7 +34,7 @@ async function newsSearchHandler(e) {
         setTimeout(overlayOff, 800)
     }
     else if (resp.data.state == "alreadyliked") {
-        overlayOn("You already liked this post")     // overlay message
+        overlayOn("You already liked this article")     // overlay message
         setTimeout(overlayOff, 800)
     }
     else {

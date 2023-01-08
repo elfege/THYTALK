@@ -465,6 +465,9 @@ def get_user_profile(user_id):
     nb_posts = Post.query.filter_by(user_id=user.id).count()
     nb_likes = Like.query.filter_by(user_id=user.id).count()
     nb_posts_liked = 0
+    nb_likes_articles = 0
+    
+    likedarticles = LikedArticle.query.filter_by(user_id=user.id).count()
     
     posts = Post.query.filter_by(user_id=user.id).all()
     
@@ -483,12 +486,9 @@ def get_user_profile(user_id):
                             nb_likes=nb_likes,
                             nb_posts_liked=nb_posts_liked)
         
-    
-
 @app.route("/tags")
 def get_tags():
     """list all existing tags"""
-
 
 @app.route("/api/posts/<int:id>", methods=["DELETE"])
 def delete_post(id):
@@ -502,6 +502,7 @@ def delete_post(id):
     session_commit()
     return jsonify(message="deleted")
 
+# /***********LIKE POSTS***************************/
 @app.route("/api/posts/like/<int:id>", methods=["POST"])
 def like_post(id):
     """API LIKE POSTS METHOD"""
@@ -543,9 +544,7 @@ def like_post(id):
 
         return jsonify(likes=nb_likes)
 
-
-# /***********LIKES TO REPLIES***************************/
-
+# /***********LIKE REPLIES***************************/
 
 @app.route("/api/replies/<int:id>", methods=["DELETE"])
 def delete_reply(id):
@@ -559,7 +558,6 @@ def delete_reply(id):
     session_commit()
     serialized = {"reply": "deleted"}
     return jsonify(message=serialized)
-
 
 @app.route("/api/replies/like/<int:id>", methods=["POST"])
 def like_reply(id):
@@ -611,9 +609,7 @@ def like_reply(id):
 
         return jsonify(likes=nb_likes)
 
-
 # ***************************REPLY TO A POST****************************
-
 
 @app.route("/api/reply/<int:post_id>", methods=["GET", "POST"])
 def answer(post_id):
@@ -654,7 +650,6 @@ def answer(post_id):
     return redirect(url_for("main_page"))
     # return render_template("reply_form.html", form=form, post=post)
 
-
 def session_commit():
     try:
         db.session.commit()
@@ -665,7 +660,6 @@ def session_commit():
         db.session.rollback()
         return redirect(url_for("main_page"))
 
-
 @app.route("/talk/signout")
 def logout():
     """Logs user out and redirects to homepage."""
@@ -674,7 +668,6 @@ def logout():
 
     return redirect("/")
 
-
 @app.route("/api/flashloginfirst")
 def login_required():
     print("******************loginrequired!****************")
@@ -682,14 +675,12 @@ def login_required():
     return jsonify(message="flashmessagesent")
     # return redirect(url_for("main_page"))
 
-
 @app.route("/api/flashalreadyliked")
 def already_liked():
     flash("You can't like a post twice!", "alert alert-dark")
     return redirect(url_for("main_page"))
 
 # ############################################################################## NEWS API ####################################################################
-
 
 # I use 2 different API's because their daily number of requests is limited in their respective
 # free editions.

@@ -17,19 +17,21 @@ $(document).ready(function () {
 });
 
 
-$(".likepost").click(handlePostButton)
-$(".dislikepost").click(handlePostButton)
-$(".deletepost").click(handlePostButton)
-$(".flagpost").click(handlePostButton)
-$(".likereply").click(handlePostButton)
-$(".dislikereply").click(handlePostButton)
-$(".deletereply").click(handlePostButton)
-$(".flagreply").click(handlePostButton)
-$(".replypost").click(handlePostButton)
-$(".commentArticle").click(handlePostButton)
-$("#newPost").click(handlePostButton)
+$(".likepost").click(handleButton)
+$(".dislikepost").click(handleButton)
+$(".deletepost").click(handleButton)
+$(".flagpost").click(handleButton)
+$(".likereply").click(handleButton)
+$(".dislikereply").click(handleButton)
+$(".deletereply").click(handleButton)
+$(".flagreply").click(handleButton)
+$(".replypost").click(handleButton)
+$(".commentArticle").click(handleButton)
+$("#newPost").click(handleButton)
+$(".likearticle").click(handleButton)
 
-async function handlePostButton(e) {
+
+async function handleButton(e) {
     e.preventDefault();
 
 
@@ -42,6 +44,8 @@ async function handlePostButton(e) {
     const html_postId = `post${postId}` // (both html and sql id of the post)    
     const responseId = $(`#${btn}`).attr("data-response-id")
     const html_responseId = `response${responseId}`
+    const user_id = $(`#${btn}`).attr("data-user-id")
+    const article_title = $(`#${btn}`).attr("data-article-title")
 
 
     console.log("********************************************")
@@ -53,6 +57,8 @@ async function handlePostButton(e) {
     console.log("sql_post_container_Id ---------->", sql_post_container_Id)
     console.log("html_post_container_Id --------->", sql_post_container_Id)
     console.log("html_responseId ---------------->", html_responseId)
+    console.log("user_id ------------------------>", user_id)
+    console.log("article_title ------------------>", article_title)
     console.log()
     console.log("********************************************")
 
@@ -192,11 +198,12 @@ async function handlePostButton(e) {
 
     }
 
-    if(this.name == "newPost"){
+    if (this.name == "newPost") {
         const button = $(`#${btn}`)
 
         $(`#newPostDiv`).removeAttr("hidden")
     }
+
 }
 
 
@@ -284,7 +291,7 @@ $("#goto_saved_art_nav").click(() => {
     setTimeout(scrollToArticleBtn, 500)
 });
 
-function scrollToArticleBtn(){
+function scrollToArticleBtn() {
     const container = $("#leftSidebar")
     const scrollTo = $("#savedArticlesSubmenu_mobile_btn");
 
