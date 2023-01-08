@@ -204,6 +204,30 @@ async function handleButton(e) {
         $(`#newPostDiv`).removeAttr("hidden")
     }
 
+    if (this.name == "likearticle") {
+        const url = "/api/likearticle/"
+
+        const resp = await axios.post(url, {
+            user_id: user_id,
+            article_title: article_title
+        })
+
+        console.log("resp.data.likes => ", resp.data.likes)
+
+        if (resp.data.state == "loginrequired") {
+            overlayOn("You must login first")     // overlay message
+            $(`#${btn}`).prop("title", "Log in first") // infobulle/tooltip 
+            setTimeout(overlayOff, 800)
+        }
+        if (resp.data.state == "alreadyliked") {
+            console.log("deleting like to this reply")
+            // overlayOn("You already liked this post")     // overlay message
+            // $(`#${btn}`).prop("title", "You already liked this post")
+            // setTimeout(overlayOff, 800)
+        }
+
+        $(`#${btn}`).text(" " + resp.data.likes + " ")
+    }
 }
 
 

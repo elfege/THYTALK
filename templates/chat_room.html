@@ -1,0 +1,27 @@
+
+{%if request.MOBILE%}
+{% extends "base_talk_mobile.html" %}
+{%else%}
+{% extends "base_talk.html" %}
+{%endif%}
+
+{% block title %}THY TALK{% endblock %}
+
+{# MAIN CONTENT #}
+{% block content %}
+
+<div class="row">
+    <div class="col-xs-fluid">
+        <h4>Thank you for visiting Thytalk! Chatting will be available soon!</h4>
+    </div>
+</div>
+
+{%endblock%}
+{# END OF MAIN CONTENT #}
+
+
+{%if request.MOBILE%}
+<script>
+    // $("div").remove()
+</script>
+{%endif%}

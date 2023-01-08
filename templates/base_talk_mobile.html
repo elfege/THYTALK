@@ -115,7 +115,8 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
           <div class="container">
             <div class="col-xs-12 m-1 p-0">
               <div class="row">
-                <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{currentuser.id}}">{{ currentuser.name }}</a>
+                <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{currentuser.id}}">{{
+                  currentuser.name }}</a>
               </div>
               <div class="row">
                 {% if currentuser.img_url %}
@@ -127,15 +128,18 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               </div>
               <div class="row">
                 <div class="col-xs-2 m-0 p-0">
-                  <button onclick="window.location.href='/talk/chat/{{currentuser.id}}'" class="btn-info btn-sm bi bi-chat"></button>
-                </div>
-                
-                <div class="col-xs-2 m-0 p-0">
-                  <button onclick="window.location.href='/talk/userprofile/{{currentuser.id}}'" class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                  <button onclick="window.location.href='/talk/chat/{{currentuser.id}}'"
+                    class="btn-info btn-sm bi bi-chat"></button>
                 </div>
 
                 <div class="col-xs-2 m-0 p-0">
-                  <button onclick="window.location.href='/talk/edit/{{currentuser.id}}'" class="btn-info btn-sm bi bi-pencil-square"></button>
+                  <button onclick="window.location.href='/talk/userprofile/{{currentuser.id}}'"
+                    class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                </div>
+
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/edit/{{currentuser.id}}'"
+                    class="btn-info btn-sm bi bi-pencil-square"></button>
                 </div>
               </div>
             </div>
@@ -343,16 +347,17 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
 
                 {%if currentuser and LikedArticle%}
                 {%if session['user_id']==currentuser.id%}
-                <!-- not practical since list of articles is recreated... no persistence -->
-                <!-- <div class="col-2 d-flex justify-content-end">
-                  <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}} data-article-title="{{article['title']}} data-art-id="{{article.id}}" name="likearticle"
+                <!-- likes for articles are not persistent but remain in db for furture recommendations purpose -->
+                <div class="col-2 d-flex justify-content-end">
+                  <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}}
+                    data-article-title="{{article['title']}} data-art-id=" {{article.id}}" name="likearticle"
                     class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
                     data-placement="top" title="" style="margin-left:5px">
                     {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
                     LikedArticle.title=="{{article['title']}}",
                     LikedArticle.url=="{{article['url']}}").all()|length}}
                   </button>
-                </div> -->
+                </div>
 
                 <div class="col-8 d-flex justify-content-end">
                   <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
