@@ -30,8 +30,8 @@ $(".commentArticle").click(handlePostButton)
 
 async function handlePostButton(e) {
     e.preventDefault();
-        
-    
+
+
     const btn = this.id
     const postId = $(`#${btn}`).attr("data-post-id") // sql id
     //distinction sql/html id is needed to dynamically add replies' divs/forms before submit
@@ -41,8 +41,8 @@ async function handlePostButton(e) {
     const html_postId = `post${postId}` // (both html and sql id of the post)    
     const responseId = $(`#${btn}`).attr("data-response-id")
     const html_responseId = `response${responseId}`
-    
-    
+
+
     console.log("********************************************")
     console.log()
     console.log("this.name ---------------------->", this.name)
@@ -109,10 +109,10 @@ async function handlePostButton(e) {
     }
 
     if (this.name === "replypost") {
-        
+
         $(`#replyDiv${postId}`).removeAttr("hidden")
 
-        $(`#replySubmitBtn${postId}`).click(()=> {
+        $(`#replySubmitBtn${postId}`).click(() => {
             $(`#replyDiv${postId}`).attr("hidden", "true")
         })
 
@@ -167,25 +167,25 @@ async function handlePostButton(e) {
         const url = button.attr("data-article-url")
         const imgurl = button.attr("data-article-imgurl")
         const description = button.attr("data-article-description")
-    
+
         console.log("title:", title)
         console.log("url:", url)
         console.log("img:", imgurl)
         console.log("img:", description)
 
         $("#commentNewsTitle").text(title)
-        $("#commentNewsImage").attr("src", imgurl)        
+        $("#commentNewsImage").attr("src", imgurl)
         $("#commentNewsDescription").text(description)
 
         $("#commentNewsTitleValue").val(title)
         $("#commentNewsURL_Value").val(url)
         $("#commentNewsImageValue").val(imgurl)
         $("#commentNewsDescriptionValue").val(description)
-       
-        $(`#news_post`).removeAttr("hidden")       
 
-        if(smartDevice){
-            window.location.href='#news_post'
+        $(`#news_post`).removeAttr("hidden")
+
+        if (smartDevice) {
+            window.location.href = '#news_post'
         }
 
 
@@ -271,6 +271,31 @@ function overlayOff() {
 }
 
 
+$("#goto_saved_art_nav").click(() => {
+    openNav();
+
+    setTimeout(scrollToArticleBtn, 500)
+});
+
+function scrollToArticleBtn(){
+    const container = $("#leftSidebar")
+    const scrollTo = $("#savedArticlesSubmenu_mobile_btn");
+
+    // Calculating new position 
+    // of scrollbar
+    const position = scrollTo.offset().top
+        - container.offset().top
+        + container.scrollTop();
+
+    // Animating scrolling effect
+    container.animate({
+        scrollTop: position
+    });
+
+    // window.location.href='#leftSidebar'
+    // window.location.href='#savedArticlesSubmenu_mobile_btn'
+    // $("#savedArticlesSubmenu_mobile_btn").scroll()
+}
 
 
 $(document).ready(() => $("#subusermenu").click()) 

@@ -69,7 +69,14 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               <li class="nav-item">
                 <a class="nav-link" href="/">HOME</a>
               </li>
+              <li class="nav-item">
+                <a class="nav-link" onclick="setTimeout(openNav, 200)">USERS</a>
+              </li>
               {%if "user_id" in session %}
+              <li class="nav-item">
+                <a class="nav-link" id="goto_saved_art_nav">MY ARTICLES</a>
+              </li>
+
               <li class="nav-item">
                 <a class="nav-link" href="/talk/signout">SIGN OUT</a>
               </li>
@@ -195,6 +202,18 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
             {%endif%}
           </ul>
         </div>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+
       </div><!-- END OF USERS AND ARTICLES-->
       <!-- END OF LEFT SIDEBAR -->
 
@@ -208,8 +227,8 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                 <button class="btn-lg btn-primary glyphicon glyphicon-home color-logo" id="menu-button-mobile"
                   onclick="window.location.href='/'"></button>
               </div>
-              
-             
+
+
 
               <div class="col-xs-6 ml-0 mr-0 ml-0 pr-0 pl-0">
                 <div class="container">
@@ -227,20 +246,37 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               </div>
 
               <div class="col-xs-3 ml-0 mr-0 pr-0 d-flex justify-content-end">
+                {%if "user_id" in session %}
+                <button class="btn-lg btn-primary color-logo glyphicon glyphicon-log-out" id="signin_signup_btn_mobile"
+                  onclick="window.location.href='/talk/signout'"></button>
+                {%else%}
+                <button class="btn-lg btn-primary color-logo glyphicon glyphicon-log-in" id="signin_signup_btn_mobile"
+                  onclick="window.location.href='/talk/signin'"></button>
+                {%endif%}
+              </div>
+
+
+            </div>
+            <div class="row">
+
+              <div class="col-xs-3 ml-0 mr-0 pl-0">
+                <button class="btn-lg btn-primary glyphicon glyphicon-chevron-left color-logo ml-0"
+                  id="menu-button-mobile" onclick="openNav()"><span
+                    style="font-size: x-small;position:relative;bottom:0.4rem;">USERS</span></button>
+              </div>
+
+              <div class="col-xs-6 ml-0 mr-0 ml-0 pr-0 pl-0"></div>
+              <!-- just for grid management d-flex not working for some reason-->
+
+              <div class="col-xs-3 ml-0 mr-0 pr-0 d-flex justify-content-end">
                 <button class="btn-lg btn-primary color-logo" id="newsBtn"
                   onclick="window.location.href='#mainNewsDiv';">NEWS</button>
               </div>
 
             </div>
-            <div class="row">
-              <div class="col-xs-3 ml-0 mr-0 pl-0">
-                <button class="btn-lg btn-primary glyphicon glyphicon-chevron-left color-logo ml-0" id="menu-button-mobile"
-                  onclick="openNav()"><span style="font-size: x-small;position:relative;bottom:0.4rem;">USERS</span></button>
-              </div>
-            </div>
           </div>
         </div>
-       
+
 
         <br>
 
