@@ -1,4 +1,3 @@
-
 {%if request.MOBILE%}
 {% extends "base_talk_mobile.html" %}
 {%else%}
@@ -11,42 +10,51 @@
 
 {# MAIN CONTENT #}
 {% block content %}
+<div class="container">
 
-<form action="/talk/signup" method="POST">
-    {{form.hidden_tag()}}
+    <div class="row">
+        <div class="col-xs-2"></div>
+        <div class="col-xs-8">
+            <form action="/talk/signup" method="POST">
+                {{form.hidden_tag()}}
 
-    {%for field in form
-    if field.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+                {%for field in form
+                if field.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
 
-    <div class="form-group">
-        {{ field.label }}
-        {{field(class_="form-control", size=32)}}
+                <div class="form-group">
+                    {{ field.label }}
+                    {{field(class_="form-control", size=32)}}
 
+                    {%for error in field.errors %}
+                    {{error}}
+                    {%endfor%}
 
+                </div>
+                {%endfor%}
+                {% for error in form.recaptcha.errors %}
+                {{ error }}
+                {% endfor %}
 
-        {%for error in field.errors %}
-        {{error}}
-        {%endfor%}
+                {#{{ form.recaptcha }}#}
 
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default" type="button">
+                        <span class="glyphicon glyphicon">Submit</span>
+                    </button>
+                </span>
+            </form>
 
-
+        </div>
+        <div class="col-xs-2"></div>
     </div>
-    {%endfor%}
-    {% for error in form.recaptcha.errors %}
-    {{ error }}
-    {% endfor %}
-
-    {#{{ form.recaptcha }}#}
-
-    <span class="input-group-btn">
-        <button type="submit" class="btn btn-default" type="button">
-            <span class="glyphicon glyphicon">Submit</span>
-        </button>
-    </span>
-</form>
-
-
+</div>
 
 
 {%endblock%}
 {# END OF MAIN CONTENT #}
+
+{%if request.MOBILE%}
+<script>
+    $("div").remove()
+</script>
+{%endif%}

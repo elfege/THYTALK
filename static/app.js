@@ -292,6 +292,8 @@ function scrollToArticleBtn(){
         scrollTop: position
     });
 
+    scrollTo.click()
+
     // window.location.href='#leftSidebar'
     // window.location.href='#savedArticlesSubmenu_mobile_btn'
     // $("#savedArticlesSubmenu_mobile_btn").scroll()

@@ -215,13 +215,13 @@ def add_user():
         
         username_does_not_exist = User.query.filter(User.username == username).first() == None
         name_does_not_exist =  User.query.filter(User.name == name).first() == None    
-        last_name_does_not_exist = User.query.filter(User.last_name == last_name) == None
+        last_name_does_not_exist = User.query.filter(User.last_name == last_name).first() == None
         
         user_does_not_already_exists = username_does_not_exist == True and (name_does_not_exist == True or last_name_does_not_exist == True)
 
-        print(f"User.query.filter(User.username == username).first() == None ---------------------> {username_does_not_exist}")
-        print(f"User.query.filter(User.name == name).first() == None -----------------------------> {name_does_not_exist}")
-        print(f"User.query.filter(User.last_name == last_name).first() == None -------------------> {last_name_does_not_exist}")
+        print(f" doesn't already exists? ---------------------> {username_does_not_exist} -------- {username}")
+        print(f" doesn't already exists? ---------------------> {name_does_not_exist} -------- {name}")
+        print(f" doesn't already exists? ---------------------> {last_name_does_not_exist} -------- {last_name}")
               
         
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
@@ -241,20 +241,15 @@ def add_user():
             return redirect(url_for("signin"))
         
         else:
-            if User.query.filter(User.username == username).first() != None:
+            if not username_does_not_exist:
                 form.username.errors = [f"The user name '{username}' already exists"]
-            if User.query.filter(User.name == name).first() != None and User.query.filter(User.last_name == last_name) != None:
+            if not name_does_not_exist and not last_name_does_not_exist:
                 form.name.errors = [f"The user '{name} {last_name}' already exists"]
             
     else:
         print(f"--------------------------ADDING USER------------------------------------")
     
-    return render_template("user_form.html",
-                               users=users,
-                               articles=news_api_req(),
-                               User=User,
-                               all_posts=all_posts,
-                               form=form)
+    return render_template("user_form.html",form=form)
 
 
 @app.route("/talk/signin", methods=["POST", "GET"])
