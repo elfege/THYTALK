@@ -106,43 +106,41 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                 aria-expanded="false" id="subusermenu">USERS</button>
               <ul class="collapse" id="usersSubmenu">
 
-                <!-- CURRENTLY LOGGED IN USER -->
+                <!-- ACTIVE USER -->
                 {%if currentuser%}
                 <li>
-                  <div class="row">
-                    <div class="col-xs-4">
-                      <h6>{{ currentuser.name }}</h6>
-                    </div>
-                  </div>
-                  <div class="row">
-
-                    <div class="col-xs-4">
-                      {%if session['user_id']==currentuser.id%}
-                      <a href="/talk/post/{{ currentuser.id }}">
-                        {% else %}
-                        <a href="#">
-                          {%endif%}
-                          {% if currentuser.img_url %}
-                          <img src="{{currentuser.img_url}}" class="img-fluid" width="50px">
-                          {%else%}
-                          <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" width="50px" />
-                          {% endif %}
+                  <div class="container">
+                    <div class="col-xs-2 m-1 p-0">
+                      <div class="row">
+                        <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{currentuser.id}}">{{
+                          currentuser.name }}</a>
+                      </div>
+                      <div class="row">
+                        {% if currentuser.img_url %}
+                        <img src="{{currentuser.img_url}}" class="img-fluid m-1 p-0" style="width:50%" />
+                        {%else%}
+                        <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid m-1 p-0"
+                          style="width:50%" />
+                        {% endif %}
                         </a>
-                    </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-2 m-0 p-0">
+                          <button onclick="window.location.href='/talk/chat/{{currentuser.id}}'"
+                            class="btn-info btn-sm bi bi-chat"></button>
+                        </div>
 
-                    <div class="col-xs-4">
-                      <button type="submit" formaction="/talk/chat/{{currentuser.id}}" class="btn btn-primary btn-xs">
-                        <span class="bi bi-chat"></span></span>
-                      </button>
-                    </div>
-                    <div class="col-xs-4">
-                      <form>
-                        <button type="submit" formaction="/talk/edit/{{currentuser.id}}" class="btn btn-info btn-xs">
-                          <span class="glyphicon glyphicon-edit"></span></span>
-                        </button>
-                      </form>
-                    </div>
+                        <div class="col-xs-2 ml-1 p-0">
+                          <button onclick="window.location.href='/talk/userprofile/{{currentuser.id}}'"
+                            class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                        </div>
 
+                        <div class="col-xs-2 ml-1 p-0">
+                          <button onclick="window.location.href='/talk/edit/{{currentuser.id}}'"
+                            class="btn-info btn-sm bi bi-pencil-square"></button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                   <hr>
                 </li>
@@ -151,45 +149,45 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
 
                 <!-- ALL OTHER USERS -->
                 {%if users%}
-
                 {% for user in users %}
+                {% if user != currentuser %}
                 <li class="navbar-item">
-                  {% if user != currentuser %}
-                  <div class="row">
-                    <div class="col-xs-4">
-                      <h6>{{ user.name }}</h6>
-                    </div>
-                  </div>
-                  <div class="row">
-                    <div class="col-xs-4">
+                  <div class="container">
+                    <div class="col-xs-4 m-1 p-0">
+                      <div class="row">
+                        <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{user.id}}">{{
+                          user.name }}</a>
+                      </div>
+                      <div class="row">
+                        <div class="container">
+                          <div class="row">
+                            <div class="col-xs-2 m-0 p-0">
 
-                      <a {%if session["user_id"]==user.id%} href="/talk/{{ user.id }}" {% else %} href="#" {%endif%}>
-                        {% if user.img_url %}
-                        <img src="{{user.img_url}}" class="img-fluid" width="50px">
-                        {%else%}
-                        <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" width="50px" />
-                        {% endif %}
-                      </a>
+                              {% if user.img_url %}
+                              <img src="{{user.img_url}}" class="img-fluid m-1 p-0" />
+                              {%else%}
+                              <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid m-1 p-0" />
+                              {% endif %}
+                              </a>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-1 ml-0 mr-0 p-0">
+                          <button onclick="window.location.href='/talk/chat/{{user.id}}'"
+                            class="btn-info btn-sm bi bi-chat"></button>
+                        </div>
+                        <div class="col-xs-1 ml-0 mr-0 p-0">
+                          <button onclick="window.location.href='/talk/userprofile/{{user.id}}'"
+                            class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                        </div>
+                      </div>
                     </div>
-                    <div class="col-xs-4">
-                      <button type="submit" formaction="/talk/chat/{{user.id}}" class="btn btn-primary btn-xs">
-                        <span class="bi bi-chat"></span></span>
-                      </button>
-                    </div>
-                    {%if session["user_id"] == user.id%}
-                    <div class="col-xs-4">
-                      <form>
-                        <button type="submit" formaction="/talk/edit/{{user.id}}" class="btn btn-info btn-xs">
-                          <span class="glyphicon glyphicon-edit"></span></span>
-                        </button>
-                      </form>
-                    </div>
-                    {%endif%}
-                    </form>
                   </div>
-                  <br>
-                  {%endif%}
                 </li>
+                <br>
+                {%endif%}
                 {% endfor %}
                 {%endif%}
               </ul>
@@ -281,7 +279,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                 </a>
               </div>
             </div>
-            
+
             <!-- SAVE AND LIKE ARTICLE BUTTONS -->
             <div class="row mb-4 border-bottom pb-2">
 

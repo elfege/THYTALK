@@ -27,6 +27,7 @@ $(".deletereply").click(handlePostButton)
 $(".flagreply").click(handlePostButton)
 $(".replypost").click(handlePostButton)
 $(".commentArticle").click(handlePostButton)
+$("#newPost").click(handlePostButton)
 
 async function handlePostButton(e) {
     e.preventDefault();
@@ -189,6 +190,12 @@ async function handlePostButton(e) {
         }
 
 
+    }
+
+    if(this.name == "newPost"){
+        const button = $(`#${btn}`)
+
+        $(`#newPostDiv`).removeAttr("hidden")
     }
 }
 

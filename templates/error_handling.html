@@ -5,25 +5,15 @@
 {% extends "base_talk.html" %}
 {%endif%}
 
-{% block title %}TALK ERROR PAGE{% endblock %}
-
-{# TOP CONTENT #}
-{% block content_top %}
-{% block page_name %}<h1>SOMETHING WENT WRONG...</h1>{% endblock %}
-{%endblock%}
-{# END OF TOP CONTENT #}
-
-{# SIDE CONTENT #}
-{% block sidecontent_l %}
-{%endblock%}
-{# END OF SIDE CONTENT #}
 
 {# MAIN CONTENT #}
 {% block content %}
 {%endblock%}
 {# END OF MAIN CONTENT #}
 
-{# SIDE CONTENT RIGHT #}
-{% block sidecontent_r %}
-{%endblock%}
-{# END OF SIDE CONTENT #}
+
+{%if request.MOBILE%}
+<script>
+    $("div").remove()
+</script>
+{%endif%}

@@ -106,7 +106,7 @@ errors = Blueprint('errors', __name__)
 def server_error(err):
     """404 NOT FOUND page."""
     app.logger.exception(err)
-    flash(f"{err}", "message label label-danger")
+    flash(f"{err}", "error")
     # raise
     db.session.rollback()
     return render_template('404.html'), 404
@@ -126,6 +126,7 @@ def main_page():
 
     users = User.query.all()
     form = AddUser()
+    form_new_post = AddComment() # hidden form
     user_auth = session.get("user_id", None)
     user = None
     saved_articles = None
@@ -154,7 +155,8 @@ def main_page():
                            Response=Response,
                            saved_articles=saved_articles,
                            liked_articles=liked_articles,
-                           LikedArticle=LikedArticle)
+                           LikedArticle=LikedArticle,
+                           form_new_post=form_new_post)
 
 
 @app.route("/talk/api/search_news/<keyword>")
@@ -375,7 +377,6 @@ def post_news(user_id):
             
     return redirect(url_for("main_page"))
     
-
 @app.route("/talk/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     """Delete a user"""
@@ -391,7 +392,6 @@ def delete_user(user_id):
 
     users = User.query.all()
     return redirect(url_for("main_page"))
-
 
 @app.route("/talk/edit/<int:user_id>", methods=["POST", "GET"])
 def edit_user(user_id):
@@ -450,6 +450,40 @@ def edit_user(user_id):
             f"--------------------------EDITING USER------------------------------------")
         return render_template("edit_user_form.html", users=users, all_posts=all_posts, form=form, User=User, user=usr)
 
+@app.route("/talk/userprofile/<int:user_id>")
+def get_user_profile(user_id):
+    
+    print(f"***************************************")
+    user = User.query.get_or_404(user_id)
+    
+    username = user.username
+    name = user.name
+    last_name = user.last_name
+    imageurl = user.img_url
+    
+    print(f"------------------------------------------")
+    nb_posts = Post.query.filter_by(user_id=user.id).count()
+    nb_likes = Like.query.filter_by(user_id=user.id).count()
+    nb_posts_liked = 0
+    
+    posts = Post.query.filter_by(user_id=user.id).all()
+    
+    print(f"+++++++++++++++++++++++++++++++++++++++++++")
+    for post in posts:
+        if Like.query.filter(Like.post_id == post.id).first() != None:
+            nb_posts_liked += 1
+    
+    return render_template("user_profile.html",
+                            user=user,
+                            username=username,
+                            name=name,
+                            last_name=last_name,
+                            imageurl=imageurl,
+                            nb_posts=nb_posts,
+                            nb_likes=nb_likes,
+                            nb_posts_liked=nb_posts_liked)
+        
+    
 
 @app.route("/tags")
 def get_tags():
@@ -755,3 +789,4 @@ def save_article():
     db.session.commit()
 
     return jsonify(message="saved")
+

@@ -1,18 +1,31 @@
-{% extends 'base_talk.html' %}
-
+{%if request.MOBILE%}
+{% extends "base_talk_mobile.html" %}
+{%else%}
+{% extends "base_talk.html" %}
+{%endif%}
 {% block body_class %}error-404{%endblock %}
 
 {% block content %}
 
+<div class="container">
   <div class="message-404">
-    
     <div class="row">
-      <div class="col-sm-8 ml-auto mr-auto">
-        <h4 class="display-4">Sorry, something went wrong! :( {{ request.status }}</h4>
-    
-      <a href="/"><b>return to the homepage</b></a>
+      <div class="col-xs-1"></div>
+      <div class="col-xs-8">
+        <h4 class="display-1">Sorry, something went wrong! :( </h4>
+        <h4> {{ request.status }}</h4>
+
+        <a href="/"><b>home page</b></a>
       </div>
+      <div class="col-xs-1"></div>
     </div>
   </div>
+</div>
 
 {% endblock %}
+
+{%if request.MOBILE%}
+<script>
+  $("div").remove()
+</script>
+{%endif%}

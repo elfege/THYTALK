@@ -25,9 +25,9 @@ li {
 @media only screen and (max-width: 800px) {}
 
 .messages {
+    
     position: relative;
-    /* left:50%;
-    right:50%; */
+    overflow-wrap: break-word;
     color: rgb(14, 14, 65);
     font-size: 20px;
     text-transform: capitalize;
@@ -39,6 +39,15 @@ li {
     padding-bottom: 10px;
     padding-left: 10px;
 
+}
+
+.error {
+    color: white;
+    font-size: 20px;
+    background-color:red;
+    padding-right: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
 }
 
 

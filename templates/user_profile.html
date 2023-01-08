@@ -1,0 +1,45 @@
+{%if request.MOBILE%}
+{% extends "base_talk_mobile.html" %}
+{%else%}
+{% extends "base_talk.html" %}
+{%endif%}
+
+{% block title %}TALK{% endblock %}
+
+
+
+{# MAIN CONTENT #}
+{% block content %}
+
+<div class="container">
+    <div class="row ml-4">
+        <div class="col-xs-6">
+            <img src="{{imageurl}}" alt="" class="img-fluid mb-5 p-0" />
+        </div>
+    </div>
+    <div class="row ml-5">
+        
+        <p>First Name: {{name}}</p>
+        <p>Last Name: {{last_name}}</p>
+        <p>id:{{username}}</p>
+        <p>Number of posts: {{nb_posts}}</p>
+        <p>Number of posts that were liked by other users: {{nb_posts_likes}}</p>
+        <p>Number of posts liked by this user: {{nb_likes}}</p>
+    </div>
+
+
+
+
+        </div>
+    </div>
+</div>
+
+
+{%endblock%}
+{# END OF MAIN CONTENT #}
+
+{%if request.MOBILE%}
+<script>
+    $("div").remove()
+</script>
+{%endif%}

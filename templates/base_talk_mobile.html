@@ -112,45 +112,36 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
         <!-- USERS -->
         {%if currentuser%} <!-- ACTIVE USER -->
         <div class="row">
-          <div class="col-lg-2">
-            <div class="row">
-
-              <a style="font-size:large;color:rgb(3, 2, 2)">{{ currentuser.name }}</a>
-              <a {%if session['user_id']==currentuser.id%} href="#" {% else %} {%endif%}>
+          <div class="container">
+            <div class="col-xs-12 m-1 p-0">
+              <div class="row">
+                <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{currentuser.id}}">{{ currentuser.name }}</a>
+              </div>
+              <div class="row">
                 {% if currentuser.img_url %}
-                <img src="{{currentuser.img_url}}" class="img-fluid max-width:30%">
+                <img src="{{currentuser.img_url}}" class="img-fluid m-1 p-0" style="width:50%" />
                 {%else%}
-                <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" />
+                <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid m-1 p-0" style="width:50%" />
                 {% endif %}
-              </a>
+                </a>
+              </div>
+              <div class="row">
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/chat/{{currentuser.id}}'" class="btn-info btn-sm bi bi-chat"></button>
+                </div>
+                
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/userprofile/{{currentuser.id}}'" class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                </div>
 
-            </div>
-            <div class="row">
-              <div class="container">
-                <div class="row">
-                  <div class="col-lg-6">
-                    <button type="submit" formaction="/talk/chat/{{currentuser.id}}"
-                      class="btn btn-info btn-xs bi bi-chat"></button>
-
-                  </div>
-                  {%if session["user_id"] == currentuser.id%}
-                  {# a bit redundent but keep it out of extra precaution #}
-                  <div class="col-lg-6">
-                    <form>
-                      <button type="submit" formaction="/talk/edit/{{currentuser.id}}"
-                        class="btn btn-info btn-xs-1 glyphicon glyphicon-edit"></button>
-                    </form>
-                  </div>
-                  <br>
-                  <br>
-                  <hr>
-                  <br>
-                  {%endif%}
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/edit/{{currentuser.id}}'" class="btn-info btn-sm bi bi-pencil-square"></button>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <hr>
         {%endif%}
 
         <!-- ALL OTHER USERS TODO: SHOW ACTIVE/INACTIVE STATUS-->
@@ -158,25 +149,30 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
         {% for user in users %}
         {% if user != currentuser %}
         <div class="row">
-          <div class="col-lg-2">
-            <div class="container">
+
+          <div class="container">
+            <div class="col-xs-12 m-1 p-0">
               <div class="row">
-
-                <a style="font-size:large;color:rgb(9, 8, 7);">{{ user.name }}</a>
-                <a {%if session["user_id"]==user.id%} href="#" {% else %} {%endif%}>
-                  {% if user.img_url %}
-                  <img src="{{user.img_url}}" class="img-fluid max-width:30%">
-                  {%else%}
-                  <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid" />
-                  {% endif %}
-                </a>
-
+                <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{user.id}}">{{ user.name }}</a>
               </div>
               <div class="row">
-
-                <button type="submit" formaction="/talk/chat/{{user.id}}"
-                  class="btn btn-info btn-xs bi bi-chat"></button>
-
+                {% if user.img_url %}
+                <img src="{{user.img_url}}" class="img-fluid m-1 p-0" style="width:50%" />
+                {%else%}
+                <img src="{{url_for('static', filename='logo.jpg')}}" class="img-fluid m-1 p-0" style="width:50%" />
+                {% endif %}
+                </a>
+              </div>
+              <div class="row">
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/chat/{{user.id}}'"
+                    class="btn-info btn-sm bi bi-chat"></button>
+                </div>
+                <div class="col-xs-2 m-0 p-0"></div>
+                <div class="col-xs-2 m-0 p-0">
+                  <button onclick="window.location.href='/talk/userprofile/{{user.id}}'"
+                    class="btn-info btn-sm bi bi-info-circle-fill"></button>
+                </div>
               </div>
             </div>
           </div>
@@ -290,10 +286,8 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               <div class="col-xs-12" style="text-align: center;">
                 <ul>
                   {% for category, message in messages %}
-                  <li class="{{ category }}">{{ message }}</li>
-                  {#categories are CSS classes to be styled
-                  in
-                  app.css! #}
+                  <li></li>
+                  <p class="{{ category }}" style="overflow-wrap:break-word;">{{ message }}</p>
                   {% endfor %}
                 </ul>
               </div>
