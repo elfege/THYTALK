@@ -126,6 +126,12 @@ class User(db.Model):
         nullable=True,
         default=DEFAULT_URL
     )
+    
+    is_online = db.Column(
+        db.Boolean, 
+        default=False,
+        nullable=False     
+    )
 
     #post = db.relationship("Post")
 
@@ -164,6 +170,10 @@ class User(db.Model):
 
         return f"I'm {self.name} the {self.species or 'thing'}"
 
+    def update_online_status(self, B):
+        self.is_online = B
+        db.session.merge(self)
+        db.session.commit()
     
     def update_user(self, name, last_name, img_url, new_password, old_password, username):
         """Update/edit user info"""

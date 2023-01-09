@@ -227,6 +227,9 @@ async function handleButton(e) {
         }
 
         $(`#${btn}`).text(" " + resp.data.likes + " ")
+
+        const art_loop_idx = $(`#${btn}`).attr("data-article-loopidx")
+        $(`#savearticle${art_loop_idx}`).click() // save this article
     }
 }
 
@@ -337,5 +340,10 @@ function scrollToArticleBtn() {
     // $("#savedArticlesSubmenu_mobile_btn").scroll()
 }
 
+setInterval(checkUsersOnlineStatus, 1000)
+
+function checkUsersOnlineStatus(){
+    
+}
 
 $(document).ready(() => $("#subusermenu").click()) 

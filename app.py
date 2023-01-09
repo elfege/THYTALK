@@ -135,6 +135,7 @@ def main_page():
         user_id = session["user_id"]
         saved_articles = SavedArticle.query.filter_by(user_id=user_id).all()
         
+        print(f"USER {user.name} IS NOW ONLINE ? --------------------> {user.is_online}")
         
 
     # n = get_news("top-headlines", "breaking-news")
@@ -274,9 +275,13 @@ def signin():
 
         if user:
             all_posts = Post.query.all()
-            session["user_id"] = user.id  # keep logged in
+            session["user_id"] = user.id  
             users = User.query.all()
             user_auth = User.query.get_or_404(user.id)
+            
+            print(f"UPDATING ONLINE STATUS+++++++++++++++++++++++++++++++++")
+            User.update_online_status(user, True)
+            
 
             return redirect(url_for("main_page"))
            
@@ -512,9 +517,11 @@ def delete_post(id):
     return jsonify(message="deleted")
 
 # /***********LIKE POSTS***************************/
+
 @app.route("/api/posts/like/<int:id>", methods=["POST"])
 def like_post(id):
     """API LIKE POSTS METHOD"""
+    
     print(f"**************************************************API LIKE POSTS METHOD***********************************************")
 
     nb_likes = Like.query.filter_by(post_id=id).count()
@@ -553,7 +560,7 @@ def like_post(id):
 
         return jsonify(likes=nb_likes)
 
-# /***********LIKE REPLIES***************************/
+# ***********LIKE REPLIES***************************
 
 @app.route("/api/replies/<int:id>", methods=["DELETE"])
 def delete_reply(id):
@@ -571,8 +578,7 @@ def delete_reply(id):
 @app.route("/api/replies/like/<int:id>", methods=["POST"])
 def like_reply(id):
     """API LIKE A REPLY METHOD"""
-    print(f"**************************************************API LIKE A REPLY METHOD***********************************************")
-
+    
     nb_likes = Like_reply.query.filter_by(reply_id=id).count()
     print(f"********* NB LIKES = {nb_likes}")
 
@@ -581,27 +587,18 @@ def like_reply(id):
 
     user = User.query.get(session["user_id"])
 
-    print(f"**********************************already_liked_by_user ?**************************************************")
     print(f"user = {user}")
 
     # see if in 'likes' table, there's a row with user_id = user.id and post_id = id
+    
     l = Like_reply.query
     already_liked_by_user = l.filter(
         Like_reply.user_id == user.id, Like_reply.reply_id == id).first() != None
 
-    print(
-        f"********************************already_liked_by_user ? {already_liked_by_user}*********************************")
-
     if already_liked_by_user:
         toDelete = Like_reply.query.filter(
             Like_reply.user_id == user.id, Like_reply.reply_id == id).first()
-        
-        print(f"*********************************************************************")
-        print()
-        print(f"                    toDelete:{toDelete}                              ")
-        print()
-        print(f"*********************************************************************")
-        
+          
         db.session.delete(toDelete)
         db.session.commit()
 
@@ -672,7 +669,9 @@ def session_commit():
 @app.route("/talk/signout")
 def logout():
     """Logs user out and redirects to homepage."""
-
+    
+    user = User.query.get(session["user_id"])
+    User.update_online_status(user, False)
     session.pop("user_id")
 
     return redirect("/")
@@ -701,9 +700,8 @@ def news_api_req():
 
     news = get_news("top-headlines", "breaking-news")
     if list(news.keys())[0] == "errors":
-        """THE 2 API'S USE ONE (AND ONE ONLY) DIFFERENT KEY FOR THE IMAGE URL
-        THIS FUNCTION MAKES SURE THEY BOTH HAVE THE SAME KEY
-        TODO: SYSTEMATIZE HOMOGENEITY OF ALL KEYS... big project!
+        """BOTH API'S HAVE A DIFFERENT DICT KEY FOR THE IMAGE URL
+        THIS FUNCTION MAKES SURE THEY BOTH HAVE THE SAME DICT KEY
         """
         news = get_news_2()
         articles = news['articles']
@@ -720,14 +718,6 @@ def news_api_req():
             v = dic['urlToImage']
             del dic['urlToImage']
             dic['image'] = v
-
-            # print(
-            #     f"*****************************************************************************")
-            # print(
-            #     f"                             ARTICLES WITH NEW KEY                           ")
-            # print(f"{dic}")
-            # print(
-            #     f"*****************************************************************************")
 
         return articles
 

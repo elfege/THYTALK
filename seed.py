@@ -29,7 +29,7 @@ Elfege = User(name='Elfege',
               username='elfege',
               password=hashed_utf8,
               img_url="https://elfege.com/images/elfege.jpg")
-Paul = User(name='Bob', 
+Bob = User(name='Bob', 
             last_name="Marley",
             username='bob',
             password=hashed_utf8,
@@ -41,7 +41,7 @@ Jack = User(name='Jack',
 
 # Add new objects to session, so they'll persist
 db.session.add(Elfege)
-db.session.add(Paul)
+db.session.add(Bob)
 db.session.add(Jack)
 
 # create a longer list of users for tests purposes
@@ -69,20 +69,20 @@ post = Post(
     user_id=usr.id,
     post_author=usr.full_name,
     post_title="Welcome",
-    post="Welcome to THY TALK! The site where free speech is for real!" 
+    post="Welcome to THY TALK! Join us for free and read / comment on the latest news at will!"
 )
-post2 = Post(
-    user_id=usr.id,
-    post_author=usr.full_name,
-    post_title="Welcome",
-    post="Here you can speak freely whith whoever you may come across. With no selective algorithm, you will meet people just like you do in real life: randomly! Not just people who think like you, eat like you or listen to the same music as you.",
-    # pub_date=datetime.datetime.now
-)
+# post2 = Post(
+#     user_id=usr.id,
+#     post_author=usr.full_name,
+#     post_title="Welcome",
+#     post="Here you can speak freely whith whoever you may come across. With no selective algorithm, you will meet people just like you do in real life: randomly! Not just people who think like you, eat like you or listen to the same music as you.",
+#     # pub_date=datetime.datetime.now
+# )
 
 # see: https://mike.depalatis.net/blog/sqlalchemy-timestamps.html
 
 db.session.add(post)
-db.session.add(post2)
+# db.session.add(post2)
 db.session.commit()
 
 # assign a tag to a post 
@@ -91,51 +91,33 @@ tag_to_first_post = Tag(
     post_id = post.id,
     tag = "first test tag"    
 )
-tag_to_first_post_2 = Tag(
-    post_id = post.id,
-    tag = "second test tag"    
-)
-
-tag_to_second_post = Tag(
-    post_id = post2.id,
-    tag = "first test tag 2"    
-)
-tag_to_second_post_2 = Tag(
-    post_id = post2.id,
-    tag = "second test tag 2"    
-)
 
 db.session.add(tag_to_first_post)
-db.session.add(tag_to_first_post_2)
-db.session.add(tag_to_second_post)
-db.session.add(tag_to_second_post_2)
-
 db.session.commit()
 
 response_1_to_1st_post = Response(
     user_id=usr.id,
     post_id=post.id,
     reply_author="Elfege",
-    response = "You can reply to any post. However, you can't (yet) reply to replies in infinite cascades! This isn't ready-it (yet!) :) "    
+    response = "You can reply to any post."    
 )
-response_2_to_1st_post = Response(
-    user_id=usr.id,
-    post_id=post.id,
-    reply_author="Elfege",
-    response = "Be ready for when one can create their own threads!"    
-)
+# response_2_to_1st_post = Response(
+#     user_id=usr.id,
+#     post_id=post.id,
+#     reply_author="Elfege",
+#     response = "Be ready for when one can create their own threads!"    
+# )
 
 db.session.add(response_1_to_1st_post)
-db.session.add(response_2_to_1st_post)
-
+# db.session.add(response_2_to_1st_post)
 db.session.commit()
 
 # create a like for user 1, post 1
-like_post1 = Like(user_id=usr.id, post_id=post.id)
-like_post2 = Like(user_id=usr.id, post_id=post2.id)
+# like_post1 = Like(user_id=usr.id, post_id=post.id)
+# like_post2 = Like(user_id=usr.id, post_id=post2.id)
 
-db.session.add(like_post1)
-db.session.add(like_post2)
-db.session.commit()
+# db.session.add(like_post1)
+# db.session.add(like_post2)
+# db.session.commit()
 
 

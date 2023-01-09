@@ -113,7 +113,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                     <div class="col-xs-2 m-1 p-0">
                       <div class="row">
                         <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{currentuser.id}}">{{
-                          currentuser.name }}</a>
+                          currentuser.name }} {%if currentuser.is_online%} <span style="color:green;font-size: xx-small;">online</span>{%endif%}</a>
                       </div>
                       <div class="row">
                         {% if currentuser.img_url %}
@@ -155,8 +155,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
                   <div class="container">
                     <div class="col-xs-4 m-1 p-0">
                       <div class="row">
-                        <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{user.id}}">{{
-                          user.name }}</a>
+                        <a style="font-size:large;color:rgb(9, 8, 7);" href="/talk/userprofile/{{user.id}}">{{ user.name }} {%if user.is_online%} <span style="color:green;font-size: xx-small;">online</span>{%endif%}</a>
                       </div>
                       <div class="row">
                         <div class="container">
@@ -287,8 +286,8 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               {%if session['user_id']==currentuser.id%}
               <!-- likes for articles are not persistent but remain in db for furture recommendations purpose -->
               <div class="col-2 d-flex justify-content-end">
-                <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}}
-                  data-article-title="{{article['title']}} data-art-id=" {{article.id}}" name="likearticle"
+                <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}} data-article-loopidx="{{loop.index}}"
+                  data-article-title="{{article['title']}} data-art-id="{{article.id}}" name="likearticle"
                   class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
                   data-placement="top" title="" style="margin-left:5px">
                   {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
