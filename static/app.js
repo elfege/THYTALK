@@ -28,6 +28,7 @@ $(".flagreply").click(handleButton)
 $(".replypost").click(handleButton)
 $(".commentArticle").click(handleButton)
 $("#newPost").click(handleButton)
+$(".editpostednews").click(handleButton) // 
 $(".likearticle").click(handleButton)
 
 
@@ -119,9 +120,9 @@ async function handleButton(e) {
 
         $(`#replyDiv${postId}`).removeAttr("hidden")
 
-        $(`#replySubmitBtn${postId}`).click(() => {
-            $(`#replyDiv${postId}`).attr("hidden", "true")
-        })
+        // $(`#replySubmitBtn${postId}`).click(() => {
+        //     $(`#replyDiv${postId}`).attr("hidden", "true")
+        // })
 
 
     }
@@ -204,6 +205,43 @@ async function handleButton(e) {
         $(`#newPostDiv`).removeAttr("hidden")
     }
 
+    if (this.name == "editpostednews") {
+        
+        const button = $(`#${btn}`)
+
+        const post_id = button.attr("data-post-id")
+        const title = button.attr("data-article-title")
+        const url = button.attr("data-article-url")
+        const imgurl = button.attr("data-article-imgurl")
+        const description = button.attr("data-article-description")
+        const post_content = button.attr("data-post-content")
+
+        console.log("post id:", post_id)
+        console.log("title:", title)
+        console.log("url:", url)
+        console.log("img:", imgurl)
+        console.log("description:", description)
+        console.log("post_content:", post_content)
+
+        $("#commentNewsTitle").text(title)
+        $("#commentNewsImage").attr("src", imgurl)
+        $("#commentNewsDescription").text(description)
+
+        $("#commentNewsTitleValue").val(title)
+        $("#commentNewsURL_Value").val(url)
+        $("#commentNewsImageValue").val(imgurl)
+        $("#commentNewsDescriptionValue").val(description)
+
+        $("#articleComment").val(post_content)
+
+        $(`#news_post`).removeAttr("hidden")
+
+        if (smartDevice) {
+            window.location.href = '#news_post'
+        }
+
+    }
+
     if (this.name == "likearticle") {
         const url = "/api/likearticle/"
 
@@ -237,11 +275,11 @@ async function handleButton(e) {
 
 const all_butns = $(".savearticle_cls")
 const allSaveButtons = [...all_butns]
-console.log("list: ", allSaveButtons)
+// console.log("list: ", allSaveButtons)
 
 for (let i = 0; i < all_butns.length; i++) {
     const b = all_butns[i].id
-    console.log("event listener created for btn id '", b, "'")
+    // console.log("event listener created for btn id '", b, "'")
     $(`#${b}`).click(handleSaveButton)
 }
 

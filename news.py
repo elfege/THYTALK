@@ -45,4 +45,28 @@ def get_news_2():
     return resp.json()
 
 
+# I use 2 different API's because their daily number of requests is limited in their respective
+# free editions.
+def news_api_req():
+    articles = {}
+    news = get_news("top-headlines", "breaking-news")
+    if list(news.keys())[0] == "errors":
+        """BOTH API'S HAVE A DIFFERENT DICT KEY FOR THE IMAGE URL
+        THIS FUNCTION MAKES SURE THEY BOTH HAVE THE SAME DICT KEY
+        """
+        news = get_news_2()
+        articles = news['articles']
 
+        for dic in articles:
+            v = dic['urlToImage']
+            del dic['urlToImage']
+            dic['image'] = v
+
+        return articles
+
+    else:
+        articles = news['articles']
+        return articles
+
+
+print("NEWS.PY LOADED")

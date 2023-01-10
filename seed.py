@@ -121,3 +121,4 @@ db.session.commit()
 # db.session.commit()
 
 
+print("SEED.PY LOADED")

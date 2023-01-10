@@ -10,7 +10,7 @@ from forms import (AddUser,
                    LoginForm,
                    UpdateUser)
 
-from news import get_news, get_news_2
+from news import get_news, get_news_2, news_api_req
 import requests
 from werkzeug.datastructures import ImmutableMultiDict
 
@@ -92,16 +92,11 @@ with app.app_context():
     connect_db(app)
 
 
-@app.route("/")
-def just_dev():
-    return redirect(url_for("main_page"))
 
 
 #############################################################################
 
 errors = Blueprint('errors', __name__)
-
-
 @app.errorhandler(Exception)
 def server_error(err):
     """404 NOT FOUND page."""
@@ -110,33 +105,42 @@ def server_error(err):
     # raise
     db.session.rollback()
     return render_template('404.html'), 404
-
-
-@app.route("/None")
+@app.route("/talk/False/None")
 def None_Error():
     # For some reason app.js calls GET "/None" at some point, so until I figure this out, redirect
-    return redirect("/talk")
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
-@app.route("/talk")
-def main_page():
+@app.route("/")
+def home():
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
+@app.route("/talk/<populateEditForm>/<int:post_id>")
+def main_page(populateEditForm, post_id):
     """List Users and show add form."""
-
-    print("////////////////////////////////////////////////////")
 
     users = User.query.all()
     form = AddUser()
-    form_new_post = AddComment() # hidden form
+    form_new_post = AddComment()  # hidden form
+    form_edit_post = AddComment() # hidden form
     user_auth = session.get("user_id", None)
     user = None
     saved_articles = None
     
+    # print(f"////////////////////populateEditForm ===> {populateEditForm}////////////////////////////////")
+    # print(f"////////////////////post_id ===> {post_id}////////////////////////////////")
+    
+    if populateEditForm and post_id != 0:
+        post = Post.query.get(post_id)
+        form_edit_post.post_title.data = post.post_title
+        form_edit_post.post_content.data = post.post        
+
     if ("user_id" in session):
-        user=User.query.get(user_auth)
+        user = User.query.get(user_auth)
         user_id = session["user_id"]
         saved_articles = SavedArticle.query.filter_by(user_id=user_id).all()
-        
-        print(f"USER {user.name} IS NOW ONLINE ? --------------------> {user.is_online}")
-        
+
+        print(
+            f"USER {user.name} IS NOW ONLINE ? --------------------> {user.is_online}")
 
     # n = get_news("top-headlines", "breaking-news")
 
@@ -156,17 +160,22 @@ def main_page():
                            saved_articles=saved_articles,
                            liked_articles=liked_articles,
                            LikedArticle=LikedArticle,
-                           form_new_post=form_new_post)
+                           form_new_post=form_new_post,
+                           form_edit_post=form_edit_post,
+                           populateEditForm=populateEditForm,
+                           post_id=post_id,
+                           Post=Post)
+
 
 @app.route("/talk/chat/<int:user_id>")
 def chat(user_id):
     """chat room rendering"""
-    
+
     user = User.query.get_or_404(user_id)
     users = User.query.all()
-    
-    
+
     return render_template("chat_room.html", users=users, currentuser=user, user=user)
+
 
 @app.route("/talk/api/search_news/<keyword>")
 def search_news(keyword):
@@ -203,6 +212,7 @@ def search_news(keyword):
 
     # print(f"RESPONSE NEWS SEARCH: {resp.json()}")
 
+
 @app.route("/talk/signup", methods=["POST", "GET"])
 def add_user():
     """WTF version of add_user()"""
@@ -222,18 +232,24 @@ def add_user():
         img_url = form.img_url.data
         username = form.username.data
         password = form.password.data
-        
-        username_does_not_exist = User.query.filter(User.username == username).first() == None
-        name_does_not_exist =  User.query.filter(User.name == name).first() == None    
-        last_name_does_not_exist = User.query.filter(User.last_name == last_name).first() == None
-        
-        user_does_not_already_exists = username_does_not_exist == True and (name_does_not_exist == True or last_name_does_not_exist == True)
 
-        print(f" doesn't already exists? ---------------------> {username_does_not_exist} -------- {username}")
-        print(f" doesn't already exists? ---------------------> {name_does_not_exist} -------- {name}")
-        print(f" doesn't already exists? ---------------------> {last_name_does_not_exist} -------- {last_name}")
-              
-        
+        username_does_not_exist = User.query.filter(
+            User.username == username).first() == None
+        name_does_not_exist = User.query.filter(
+            User.name == name).first() == None
+        last_name_does_not_exist = User.query.filter(
+            User.last_name == last_name).first() == None
+
+        user_does_not_already_exists = username_does_not_exist == True and (
+            name_does_not_exist == True or last_name_does_not_exist == True)
+
+        print(
+            f" doesn't already exists? ---------------------> {username_does_not_exist} -------- {username}")
+        print(
+            f" doesn't already exists? ---------------------> {name_does_not_exist} -------- {name}")
+        print(
+            f" doesn't already exists? ---------------------> {last_name_does_not_exist} -------- {last_name}")
+
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
         print(f"name: {name}")
         print(f"last_name: {last_name}")
@@ -242,24 +258,25 @@ def add_user():
         print(f"password: {password}")
         print(f"user_does_not_already_exists: {user_does_not_already_exists}")
         print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
-        
-        
 
-        if user_does_not_already_exists:            
+        if user_does_not_already_exists:
             User.register(name=name, last_name=last_name,
-                        img_url=img_url, username=username, password=password)
+                          img_url=img_url, username=username, password=password)
             return redirect(url_for("signin"))
-        
+
         else:
             if not username_does_not_exist:
-                form.username.errors = [f"The user name '{username}' already exists"]
+                form.username.errors = [
+                    f"The user name '{username}' already exists"]
             if not name_does_not_exist and not last_name_does_not_exist:
-                form.name.errors = [f"The user '{name} {last_name}' already exists"]
-            
+                form.name.errors = [
+                    f"The user '{name} {last_name}' already exists"]
+
     else:
         print(f"--------------------------ADDING USER------------------------------------")
-    
-    return render_template("user_form.html",form=form)
+
+    return render_template("user_form.html", form=form)
+
 
 @app.route("/talk/signin", methods=["POST", "GET"])
 def signin():
@@ -275,16 +292,14 @@ def signin():
 
         if user:
             all_posts = Post.query.all()
-            session["user_id"] = user.id  
+            session["user_id"] = user.id
             users = User.query.all()
             user_auth = User.query.get_or_404(user.id)
-            
+
             print(f"UPDATING ONLINE STATUS+++++++++++++++++++++++++++++++++")
             User.update_online_status(user, True)
-            
 
-            return redirect(url_for("main_page"))
-           
+            return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
         elif User.query.filter(User.username == username).first() == None:
             form.username.errors = ["THIS ACCOUNT DOES NOT EXIST"]
@@ -292,6 +307,7 @@ def signin():
             form.username.errors = ["WRONG NAME/PASSWORD"]
 
     return render_template("user_login.html", form=form)
+
 
 @app.route("/talk/post/<int:user_id>", methods=["POST", "GET"])
 def post(user_id):
@@ -304,7 +320,7 @@ def post(user_id):
     users = User.query.all()
     user = User.query.get_or_404(user_id)
 
-    # yes, needs to be called twice (due to try/except below)
+    # needs to be called twice (due to try/except below)
     old_posts = Post.get_posts_by_id(user_id)
 
     if form.validate_on_submit():
@@ -330,7 +346,7 @@ def post(user_id):
                                    currentuser=user,
                                    old_posts=old_posts,
                                    form=form)
-        return redirect(url_for("main_page"))
+        return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
     # make sure to display the lastest values
     old_posts = Post.get_posts_by_id(user_id)
@@ -341,52 +357,96 @@ def post(user_id):
                            old_posts=old_posts,
                            form=form)
 
-@app.route("/talk/post_news/<int:user_id>", methods=["POST", "GET"])
+
+@app.route("/talk/editpost/<int:post_id>", methods=["POST", "GET"])
+def update_post(post_id):
+
+    form_edit_post = AddComment()
+    post = Post.query.get(post_id)
+    title = form_edit_post.post_title.data
+    post_content = form_edit_post.post_content.data
+       
+
+    if form_edit_post.validate_on_submit():
+        """validate new post using update_post() method"""
+        
+        new_title = form_edit_post.post_title.data
+        new_post_content = form_edit_post.post_content.data
+        
+        Post.update_post(post, new_title, new_post_content)
+        
+        return redirect(url_for("main_page", populateEditForm=False, post_id=0)) 
+        
+    else:
+        """show post form ready to edit"""        
+        return redirect(url_for("main_page", populateEditForm=True, post_id=post_id))
+    
+@app.route("/talk/post_news/<int:user_id>", methods=["POST"])
 def post_news(user_id):
     """Create a new post with news content"""
-    
+
     user = User.query.get_or_404(user_id)
+
     
     article_title = request.form['commentNewsTitleValue']
     article_url = request.form['commentNewsURL_Value']
     article_imgurl = request.form['commentNewsImageValue']
     article_description = request.form['commentNewsDescriptionValue']
-    
-    articleComment = request.form['articleComment']
+    new_post_content = request.form['articleComment']
     post_title = article_title
-    
+
+
     print(f"****************************************************")
     print()
     print(f"article_title: {article_title}")
     print(f"article_url: {article_url}")
     print(f"article_imgurl: {article_imgurl}")
     print(f"article_description: {article_description}")
-    print(f"articleComment: {articleComment}")
+    print(f"new_post_content: {new_post_content}")
     print()
     print(f"****************************************************")
-    
-    new_post = Post(
-            user_id=user_id,
-            post_author=user.full_name,
-            post_title=post_title,
-            article_title = article_title,
-            article_url  = article_url,
-            article_imgurl = article_imgurl,
-            article_description = article_description,            
-            post=articleComment
-        )
 
-    db.session.add(new_post)
 
-    try:
-        db.session.commit()
-    except Exception as e:
-        err = e.orig
-        flash(f"{err}", "message label label-danger")
-        db.session.rollback()
-            
-    return redirect(url_for("main_page"))
+    l = Post.query
+    post_exists = l.filter(
+        Post.user_id == user_id, Post.article_title.like(article_title)).first() != None
     
+    if post_exists:
+        print(f"---------------------UPDATING EXISTING RE-POSTED ARTICLE----------------------------")
+        post_id = l.filter(Post.article_title.like(article_title)).first().id
+        post = Post.query.get(post_id)
+        Post.update_post(post, 
+                         post_title, 
+                         new_post_content,
+                         
+                         article_title,
+                         article_url, 
+                         article_imgurl, 
+                         article_description)
+    else:
+        new_post = Post(
+        user_id=user_id,
+        post_author=user.full_name,
+        post_title=post_title,
+        article_title=article_title,
+        article_url=article_url,
+        article_imgurl=article_imgurl,
+        article_description=article_description,
+        post=new_post_content)
+        
+        db.session.add(new_post)
+        try:
+            db.session.commit()
+        except Exception as e:
+            err = e.orig
+            flash(f"{err}", "message label label-danger")
+            db.session.rollback()
+
+    print(f"---------------------DONE UPDATING EXISTING RE-POSTED ARTICLE----------------------------")
+
+    return redirect("/")
+
+
 @app.route("/talk/users/<int:user_id>", methods=["DELETE"])
 def delete_user(user_id):
     """Delete a user"""
@@ -401,7 +461,8 @@ def delete_user(user_id):
     session_commit()
 
     users = User.query.all()
-    return redirect(url_for("main_page"))
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
 
 @app.route("/talk/edit/<int:user_id>", methods=["POST", "GET"])
 def edit_user(user_id):
@@ -454,55 +515,58 @@ def edit_user(user_id):
             flash(f"User {name} {last_name} was NOT updated (incorrect password)",
                   "alert alert-primary")
 
-        return redirect(url_for("main_page"))
+        return redirect(url_for("main_page", populateEditForm=False, post_id=0))
     else:
         print(
             f"--------------------------EDITING USER------------------------------------")
         return render_template("edit_user_form.html", users=users, all_posts=all_posts, form=form, User=User, user=usr)
 
+
 @app.route("/talk/userprofile/<int:user_id>")
 def get_user_profile(user_id):
-    
+
     print(f"***************************************")
     users = User.query.all()
-    
+
     user = User.query.get_or_404(user_id)
-    
+
     username = user.username
     name = user.name
     last_name = user.last_name
     imageurl = user.img_url
-    
+
     print(f"------------------------------------------")
     nb_posts = Post.query.filter_by(user_id=user.id).count()
     nb_likes = Like.query.filter_by(user_id=user.id).count()
     nb_posts_liked = 0
     nb_likes_articles = 0
-    
+
     # likedarticles = LikedArticle.query.filter_by(user_id=user.id).count()
-    
+
     posts = Post.query.filter_by(user_id=user.id).all()
-    
+
     print(f"+++++++++++++++++++++++++++++++++++++++++++")
     for post in posts:
         if Like.query.filter(Like.post_id == post.id).first() != None:
             nb_posts_liked += 1
-    
+
     return render_template("user_profile.html",
-                            users=users,
-                            currentuser=user,
-                            user=user,
-                            username=username,
-                            name=name,
-                            last_name=last_name,
-                            imageurl=imageurl,
-                            nb_posts=nb_posts,
-                            nb_likes=nb_likes,
-                            nb_posts_liked=nb_posts_liked)
-        
+                           users=users,
+                           currentuser=user,
+                           user=user,
+                           username=username,
+                           name=name,
+                           last_name=last_name,
+                           imageurl=imageurl,
+                           nb_posts=nb_posts,
+                           nb_likes=nb_likes,
+                           nb_posts_liked=nb_posts_liked)
+
+
 @app.route("/tags")
 def get_tags():
     """list all existing tags"""
+
 
 @app.route("/api/posts/<int:id>", methods=["DELETE"])
 def delete_post(id):
@@ -518,10 +582,11 @@ def delete_post(id):
 
 # /***********LIKE POSTS***************************/
 
+
 @app.route("/api/posts/like/<int:id>", methods=["POST"])
 def like_post(id):
     """API LIKE POSTS METHOD"""
-    
+
     print(f"**************************************************API LIKE POSTS METHOD***********************************************")
 
     nb_likes = Like.query.filter_by(post_id=id).count()
@@ -562,6 +627,7 @@ def like_post(id):
 
 # ***********LIKE REPLIES***************************
 
+
 @app.route("/api/replies/<int:id>", methods=["DELETE"])
 def delete_reply(id):
     """API DELETE REPLIES METHOD"""
@@ -575,30 +641,24 @@ def delete_reply(id):
     serialized = {"reply": "deleted"}
     return jsonify(message=serialized)
 
+
 @app.route("/api/replies/like/<int:id>", methods=["POST"])
 def like_reply(id):
     """API LIKE A REPLY METHOD"""
-    
     nb_likes = Like_reply.query.filter_by(reply_id=id).count()
     print(f"********* NB LIKES = {nb_likes}")
-
     if "user_id" not in session:
         return jsonify(likes=nb_likes, state="loginrequired")
-
     user = User.query.get(session["user_id"])
 
-    print(f"user = {user}")
-
     # see if in 'likes' table, there's a row with user_id = user.id and post_id = id
-    
+
     l = Like_reply.query
     already_liked_by_user = l.filter(
         Like_reply.user_id == user.id, Like_reply.reply_id == id).first() != None
-
     if already_liked_by_user:
         toDelete = Like_reply.query.filter(
             Like_reply.user_id == user.id, Like_reply.reply_id == id).first()
-          
         db.session.delete(toDelete)
         db.session.commit()
 
@@ -609,13 +669,12 @@ def like_reply(id):
         newData = Like_reply(user_id=user.id, reply_id=id)
         db.session.add(newData)
         session_commit()
-
         nb_likes = Like_reply.query.filter_by(
             reply_id=id).count()  # update value
-
         return jsonify(likes=nb_likes)
 
 # ***************************REPLY TO A POST****************************
+
 
 @app.route("/api/reply/<int:post_id>", methods=["GET", "POST"])
 def answer(post_id):
@@ -635,26 +694,27 @@ def answer(post_id):
     user = post.user_id
 
     # if form.validate_on_submit():
-    
+
     response = request.form["response"]
-    
+
     author = User.query.get(session["user_id"]).name
 
     print(f"user id: {user}")
     new_reply = Response(user_id=user, post_id=post_id,
-                            reply_author=author, response=response)
+                         reply_author=author, response=response)
 
     db.session.add(new_reply)
     session_commit()
 
-    return redirect(url_for("main_page"))
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
     post_id_form = post_id
 
     user_auth = session.get("user_id", None)
 
-    return redirect(url_for("main_page"))
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
     # return render_template("reply_form.html", form=form, post=post)
+
 
 def session_commit():
     try:
@@ -664,74 +724,34 @@ def session_commit():
         err = e.orig
         flash(f"{err}", "message label label-danger")
         db.session.rollback()
-        return redirect(url_for("main_page"))
+        return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
 
 @app.route("/talk/signout")
 def logout():
     """Logs user out and redirects to homepage."""
-    
+
     user = User.query.get(session["user_id"])
     User.update_online_status(user, False)
     session.pop("user_id")
 
     return redirect("/")
 
+
 @app.route("/api/flashloginfirst")
 def login_required():
     print("******************loginrequired!****************")
     flash("Please, log in first...", "alert alert-dark")
     return jsonify(message="flashmessagesent")
-    # return redirect(url_for("main_page"))
+    # return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
 
 @app.route("/api/flashalreadyliked")
 def already_liked():
     flash("You can't like a post twice!", "alert alert-dark")
-    return redirect(url_for("main_page"))
-
-# ############################################################################## NEWS API ####################################################################
-
-# I use 2 different API's because their daily number of requests is limited in their respective
-# free editions.
-
-
-def news_api_req():
-
-    articles = {}
-
-    news = get_news("top-headlines", "breaking-news")
-    if list(news.keys())[0] == "errors":
-        """BOTH API'S HAVE A DIFFERENT DICT KEY FOR THE IMAGE URL
-        THIS FUNCTION MAKES SURE THEY BOTH HAVE THE SAME DICT KEY
-        """
-        news = get_news_2()
-        articles = news['articles']
-
-        for dic in articles:
-            # print(
-            #     f"*****************************************************************************")
-            # print(
-            #     f"                             ARTICLES BEFORE KEY CHANGE                      ")
-            # print(f"{dic}")
-            # print(
-            #     f"*****************************************************************************")
-
-            v = dic['urlToImage']
-            del dic['urlToImage']
-            dic['image'] = v
-
-        return articles
-
-    else:
-        articles = news['articles']
-        return articles
-
-
-print("APP.PY OK")
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
 # ############################################################################## SAVE ARTICLES ####################################################################
-
-# parser = reqparse.RequestParser()
-# parser.add_argument('list', type=list)
 
 
 @app.route("/api/article/save", methods=['GET', 'POST', 'OPTIONS'])
@@ -781,7 +801,6 @@ def save_article():
     return jsonify(message="saved")
 
 
-
 # ############################################################################## LIKE ARTICLES ####################################################################
 
 @app.route("/api/likearticle/", methods=["POST", "GET"])
@@ -789,18 +808,17 @@ def like_article():
     """LIKE ARTICLE"""
     print(f"**************************************************LIKE ARTICLE***********************************************")
 
-    data = request.data 
+    data = request.data
     data = data.decode('utf-8')  # convert bytes to string utf-8
     data = json.loads(data)  # convert string dict to dict
-    
+
     print(f"*********data ==> {data}*********************************000")
-    
+
     article_title = data['article_title']
     user_id = data['user_id']
-    
-    
-    
-    nb_likes = LikedArticle.query.filter(LikedArticle.title.like(article_title)).count()
+
+    nb_likes = LikedArticle.query.filter(
+        LikedArticle.title.like(article_title)).count()
     print(f"********* NB LIKES = {nb_likes}")
 
     if "user_id" not in session:
@@ -821,7 +839,7 @@ def like_article():
     if already_liked_by_user:
         toDelete = LikedArticle.query.filter(
             LikedArticle.user_id == user_id, LikedArticle.title.like(article_title)).first()
-            #SavedArticle.title.like(title)).all() == [] else True
+        # SavedArticle.title.like(title)).all() == [] else True
         db.session.delete(toDelete)
         db.session.commit()
 
@@ -833,6 +851,10 @@ def like_article():
         db.session.add(newData)
         session_commit()
 
-        nb_likes = LikedArticle.query.filter_by(title=article_title).count()  # update value
+        nb_likes = LikedArticle.query.filter_by(
+            title=article_title).count()  # update value
 
         return jsonify(likes=nb_likes)
+
+
+print("APP.PY LOADED")

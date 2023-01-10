@@ -72,11 +72,12 @@ class SavedArticle(db.Model):
 
     url = db.Column(db.String(50000))
 
+
 class LikedArticle(db.Model):
     """store liked articles"""
 
     __tablename__ = "liked_articles"
-    
+
     id = db.Column(db.Integer,
                    autoincrement=True,
                    primary_key=True)
@@ -86,8 +87,9 @@ class LikedArticle(db.Model):
                         )
 
     title = db.Column(db.Text)
-    
+
     url = db.Column(db.Text)
+
 
 class User(db.Model):
     """Create a list of users with attributes"""
@@ -126,11 +128,11 @@ class User(db.Model):
         nullable=True,
         default=DEFAULT_URL
     )
-    
+
     is_online = db.Column(
-        db.Boolean, 
+        db.Boolean,
         default=False,
-        nullable=False     
+        nullable=False
     )
 
     #post = db.relationship("Post")
@@ -145,12 +147,12 @@ class User(db.Model):
                                   secondary="likes",
                                   primaryjoin=(Like.user_id == id)
                                   )
- 
+
     liked_replies = db.relationship('User',
                                     secondary="likes_reply",
                                     primaryjoin=(Like_reply.user_id == id)
                                     )
-    
+
     saved_articles = db.relationship('User',
                                      secondary="savedarticles",
                                      primaryjoin=(SavedArticle.user_id == id)
@@ -160,6 +162,7 @@ class User(db.Model):
                                      secondary="liked_articles",
                                      primaryjoin=(LikedArticle.user_id == id)
                                      )
+
     @property
     def full_name(self):
         """Return full name of user."""
@@ -174,7 +177,7 @@ class User(db.Model):
         self.is_online = B
         db.session.merge(self)
         db.session.commit()
-    
+
     def update_user(self, name, last_name, img_url, new_password, old_password, username):
         """Update/edit user info"""
 
@@ -192,11 +195,11 @@ class User(db.Model):
                 new_password).decode('UTF-8')
 
             self.password = hashed_pwd
-            
+
             print(f"////////////\\\\\\\\\\\\\\\\\\\\\\\\\\\\")
             print(f" self => {self}")
             print(f"self.password = {self.password}")
-            
+
             db.session.merge(self)
             db.session.commit()
 
@@ -273,7 +276,7 @@ class Post(db.Model):
         db.DateTime(timezone=True),
         default=datetime.utcnow
     )
-    
+
     article_title = db.Column(
         db.Text(),
         nullable=True
@@ -290,7 +293,6 @@ class Post(db.Model):
         db.Text(),
         nullable=True
     )
-    
 
     tags = db.relationship('Tag',
                            backref='posts')
@@ -306,18 +308,42 @@ class Post(db.Model):
         secondary="likes",
         primaryjoin=(Like.post_id == id),
     )
-   
 
-    def __repr__(self):
-        """Show info about user's posts."""
+    def update_post(self,
+                    post_title, 
+                    new_post_content,
+                    
+                    article_title=None,
+                    article_url=None,
+                    article_imgurl=None,
+                    article_description=None, 
+                    articleComment=post):
+        
+        """update / edit a post"""
 
-        return f"<Post {self.post_author} {self.post}>"
+        self.post_title = post_title  
+        self.post = new_post_content
+              
+        self.article_title = article_title
+        self.article_url = article_url
+        self.article_imgurl = article_imgurl
+        self.article_description = article_description
+
+        db.session.merge(self)
+        db.session.commit()
+        
+        print(f"POST SUCCESFULLY UPDATED")
 
     @classmethod
     def get_posts_by_id(cls, id):
         """Get all posts matching a user's id"""
 
         return cls.query.filter_by(user_id=id).all()
+
+    def __repr__(self):
+        """Show info about user's posts."""
+
+        return f"<Post {self.post_author} {self.post}>"
 
 
 class PostTag(db.Model):
@@ -377,13 +403,12 @@ class Response(db.Model):
     response = db.Column(db.String(50000),
                          nullable=False)
 
-  
     likes_reply = db.relationship(
         "Response",
         secondary="likes_reply",
         primaryjoin=(Like_reply.reply_id == id),
     )
- 
+
     response_date = db.Column(
         db.DateTime(timezone=True),
         default=datetime.utcnow
@@ -395,3 +420,6 @@ class Response(db.Model):
 
         data = cls.query.filter_by(user_id=id).all()
         return data
+
+
+print("MODELS.PY LOADED")

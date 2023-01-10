@@ -1,304 +1,335 @@
 {%if request.MOBILE%}
-{% extends "base_talk_mobile.html" %}
-{%else%}
-{% extends "base_talk.html" %}
-{%endif%}
+  {% extends "base_talk_mobile.html" %}
+  {%else%}
+  {% extends "base_talk.html" %}
+  {%endif%}
 
-{% block title %}THY TALK{% endblock %}
+  {% block title %}THY TALK{% endblock %}
 
+  {# MAIN CONTENT #}
+  {% block content %}
 
-{# MAIN CONTENT #}
-{% block content %}
+    {% if session["user_id"] %}
+      <div class="row">
+        <div class="col-xs-4">
+          <h6>You are logged in as
+            {{User.query.get(session["user_id"]).name}}</h6>
+        </div>
+        <div class="col-xs-4 mb-4">
+          <!-- <form action="/talk/post/{{session['user_id']}}"> -->
+          <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost" name="newPost" type="submit"></button>
+          <!-- </form> -->
+        </div>
 
-{% if session["user_id"] %}
-<div class="row">
-    <div class="col-xs-4">
-        <h6>You are logged in as {{User.query.get(session["user_id"]).name}}</h6>
-    </div>
-    <div class="col-xs-4 mb-4">
-        <!-- <form action="/talk/post/{{session['user_id']}}"> -->
-        <button class="btn btn-primary glyphicon glyphicon-pencil" id="newPost" name="newPost" type="submit"></button>
-        <!-- </form> -->
-    </div>
+      </div>
 
-</div>
+      <!-- HIDDEN EDIT POST DIVISION -->
+      <div {%if populateEditForm == "False" %} hidden="hidden" {%endif%} class="row ml-5 mb-5 new_post" id="editPostDiv">
+        <div class="container">
+          <div class="col-fluid">
 
-<!-- HIDDEN NEW POST DIVISION  -->
-<div hidden class="row ml-5 mb-5 news_post" id="newPostDiv">
-    <div class="container">
-        <div class="col-fluid">
+            <form action="/talk/editpost/{{user.id}}" method="POST">
+
+              {{form_edit_post.hidden_tag()}}
+
+              {#{%if form_edit_post.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+
+              {{ form_edit_post.csrf_token }}
+
+              {% if form_edit_post.csrf_token.errors %}
+                <div class="messages error">You have submitted an invalid CSRF token</div>
+              {% endif %}
+
+              <br>
+              {{form_edit_post.post_title(class="form-control", type="textarea", rows="1")}}
+              <br>
+              {{form_edit_post.post_content.label}}
+              <br>
+
+              {{form_edit_post.post_content(class_="form-control md-textarea", rows="5")}}
+
+              {%for error in form_edit_post.errors %}
+                <small class="form-text danger">
+                  {{error}}
+                </small>
+                {%endfor%}
+                {#{%endif%}#}
+
+                <button type="submit" class="btn btn-default">
+                  <span class="glyphicon glyphicon-send"></span>
+                  Submit
+                </button>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <!-- HIDDEN NEW POST DIVISION -->
+      <div hidden="hidden" class="row ml-5 mb-5 new_post" id="newPostDiv">
+        <div class="container">
+          <div class="col-fluid">
             <form action="/talk/post/{{user.id}}" method="POST">
 
-                {{form_new_post.hidden_tag()}}
+              {{form_new_post.hidden_tag()}}
 
-                {#{%if form_new_post.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+              {#{%if form_new_post.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
 
-                {{ form_new_post.csrf_token }}
+              {{ form_new_post.csrf_token }}
 
-                {% if form_new_post.csrf_token.errors %}
+              {% if form_new_post.csrf_token.errors %}
                 <div class="messages error">You have submitted an invalid CSRF token</div>
-                {% endif %}
+              {% endif %}
 
-                <br>
-                {{form_new_post.post_title(class="form-control", type="textarea", rows="1")}}
-                <br>
-                {{form_new_post.post_content.label}}
-                <br>
+              <br>
+              {{form_new_post.post_title(class="form-control", type="textarea", rows="1")}}
+              <br>
+              {{form_new_post.post_content.label}}
+              <br>
 
-                {{form_new_post.post_content(class_="form-control md-textarea", rows="5")}}
+              {{form_new_post.post_content(class_="form-control md-textarea", rows="5")}}
 
-                {%for error in form_new_post.errors %}
+              {%for error in form_new_post.errors %}
                 <small class="form-text danger">
-                    {{error}}
+                  {{error}}
                 </small>
                 {%endfor%}
                 {#{%endif%}#}
                 <span class="input-group-btn">
-                    <button type="submit" class="btn btn-default" type="button">
-                        <span class="glyphicon glyphicon-send"></span> Submit </button>
-                    </button>
-                </span>
+                  <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-send"></span>
+                    Submit
+                  </button>
+                </button>
+              </span>
             </form>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
 
-
-<!-- HIDDEN NEWS POST DIVISION -->
-<div hidden class="row ml-5 mb-5 news_post" id="news_post">
-    <div class="container">
-        <div class="col-fluid">
+      <!-- HIDDEN NEW NEWS POST DIVISION -->
+      <div hidden="hidden" class="row ml-5 mb-5 news_post" id="news_post">
+        <div class="container">
+          <div class="col-fluid">
             <form action="/talk/post_news/{{session['user_id']}}" method="POST">
-                <input hidden type="text" value="" id="commentNewsTitleValue" name="commentNewsTitleValue">
-                <input hidden type="text" value="" id="commentNewsURL_Value" name="commentNewsURL_Value">
-                <input hidden type="text" value="" id="commentNewsImageValue" name="commentNewsImageValue">
-                <input hidden type="text" value="" id="commentNewsDescriptionValue" name="commentNewsDescriptionValue">
+              <input hidden="hidden" type="text" value="" id="commentNewsTitleValue" name="commentNewsTitleValue">
+              <input hidden="hidden" type="text" value="" id="commentNewsURL_Value" name="commentNewsURL_Value">
+              <input hidden="hidden" type="text" value="" id="commentNewsImageValue" name="commentNewsImageValue">
+              <input hidden="hidden" type="text" value="" id="commentNewsDescriptionValue" name="commentNewsDescriptionValue">
 
+              <div class="row" id="commentNewsTitleRow" name="commentNewsTitleRow">
+                <div class="col-fluid" id="commentNewsTitleCol" name="commentNewsTitleCol">
+                  <a href="" id="commentNewsTitle" name="commentNewsTitle">Article Title</a>
+                </div>
+              </div>
+              <div class="row" id="commentNewsImageRow" name="commentNewsImageRow">
+                <div class="col-fluid" id="commentNewsImageCol" name="commentNewsImageCol">
+                  <img src="" class="img-fluid" max-width="20%" id="commentNewsImage" name="commentNewsImage"/>
+                </div>
+              </div>
+              <div class="row" id="commentNewsDescriptionRow" name="commentNewsDescriptionRow">
+                <div class="col-fluid">
+                  <p id="commentNewsDescription" name="commentNewsDescription">Article Description</p>
+                </div>
+              </div>
+              <div class="row">
 
-                <div class="row" id="commentNewsTitleRow" name="commentNewsTitleRow">
-                    <div class="col-fluid" id="commentNewsTitleCol" name="commentNewsTitleCol">
-                        <a href="" id="commentNewsTitle" name="commentNewsTitle">Article Title</a>
-                    </div>
+                <div class="col-fluid">
+                  <textarea rows="4" cols="50" id="articleComment" name="articleComment"></textarea>
                 </div>
-                <div class="row" id="commentNewsImageRow" name="commentNewsImageRow">
-                    <div class="col-fluid" id="commentNewsImageCol" name="commentNewsImageCol">
-                        <img src="" class="img-fluid" max-width="20%" id="commentNewsImage" name="commentNewsImage" />
-                    </div>
+                <div class="col-fluid">
+                  <button type="submit" class="btn btn-default glyphicon glyphicon-send">
+                    Submit
+                  </button>
                 </div>
-                <div class="row" id="commentNewsDescriptionRow" name="commentNewsDescriptionRow">
-                    <div class="col-fluid">
-                        <p id="commentNewsDescription" name="commentNewsDescription">Article Description</p>
-                    </div>
-                </div>
-                <div class="row">
-
-                    <div class="col-fluid">
-                        <textarea rows="4" cols="50" name="articleComment"></textarea>
-                    </div>
-                    <div class="col-fluid">
-                        <button type="submit" onclick="submit()" class="btn btn-default glyphicon glyphicon-send"
-                            type="button">
-                            Submit
-                        </button>
-                    </div>
-                </div>
+              </div>
             </form>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
 
-{%endif%}
+      {%endif%}
 
+      {#{% for user in users %}#}
+      {% for post in all_posts | reverse %}
 
-{#{% for user in users %}#}
-{% for post in all_posts|reverse %}
+        {#make sure to update js if you change these attributes#}
+        <div class="container-fluid post_main_container" id="post_container{{post.id}}" data-html-id="{{loop.index}}">
 
-{#make sure to update js if you change these attributes#}
-<div class="container-fluid post_main_container" id="post_container{{post.id}}" data-html-id="{{loop.index}}">
+          <!-- REGULAR POSTS DIVISION -->
+          <div class="row post_row">
+            {#make sure to update js if you change these attributes#}
 
+            <div class="col-lg-fluid">
 
-
-    <!-- REGULAR POSTS DIVISION -->
-    <div class="row post_row">{#make sure to update js if you change these attributes#}
-
-        <div class="col-lg-fluid">
-
-            <div class="media-body">
+              <div class="media-body">
 
                 {#make sure to update js if you change these attributes#}
                 <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded text-wrap" id="post{{post.id}}">
 
-                    <div class="container-fluid">
+                  <div class="container-fluid">
 
-                        <div class="row">
-                            <div class="col-xs-2">
-                                {% if User.query.get(post.user_id).img_url %}
-                                <a href="/talk/post/{{ User.query.get(post.user_id).id }}"><img
-                                        src="{{User.query.get(post.user_id).img_url}}" class="img-fluid"
-                                        width="50px"></a>
-                                {% endif %}
-                            </div>
-                            <div class="col-xs-10">
-                                <h5><span class="glyphicon glyphicon-time"></span> Posted by
-                                    {{post.post_author}} - {{post.pub_date}}
-                                    <p>{{post.title}}</p>
-                                </h5>
+                    <div class="row">
+                      <div class="col-xs-2">
+                        {% if User
+                          .query
+                          .get(post.user_id)
+                          .img_url %}
+                          <a href="/talk/post/{{ User.query.get(post.user_id).id }}"><img src="{{User.query.get(post.user_id).img_url}}" class="img-fluid" width="50px"></a>
+                        {% endif %}
+                      </div>
+                      <div class="col-xs-10">
+                        <h5>
+                          <span class="glyphicon glyphicon-time"></span>
+                          Posted by
+                          {{post.post_author}}
+                          -
+                          {{post.pub_date}}
+                          <br>
+                          <br>
+                          <p>
+                            <b>{{post.post_title}}</b>
+                          </p>
+                          <hr>
+                        </h5>
 
-                                {%if post.article_title%}
-                                <p><a href="{{post.article_url}}">{{post.article_title}}</a></p>
-                                <p><img src="{{post.article_imgurl}}" class="img-fluid" width="100px" /></p>
-                                <p>{{post.article_description}}</p>
-                                <p></p>
-                                {%endif%}
+                        {%if post.article_title%}
+                          <p>
+                            <a href="{{post.article_url}}">{{post.article_title}}</a>
+                          </p>
+                          <p><img src="{{post.article_imgurl}}" class="img-fluid" width="100px"/></p>
+                          <p>{{post.article_description}}</p>
+                          <p></p>
+                          {%endif%}
 
-                                {{post.post}}
+                          <div id="post_content{{loop.index}}" style="color:var(--logocolor);">{{post.post}}</div>
 
-                            </div>
                         </div>
+                      </div>
 
-                        {# LIKES TO POSTS DIVISION#}
-                        <div class="row">
-                            <div class="col-12 d-flex justify-content-end">
+                      {# BUTTONS ADDED TO POST DIVISION #}
+                      <div class="row">
+                        <div class="col-12 d-flex justify-content-end">
 
-                                <button id="likepost{{loop.index}}" data-post-id="{{post.id}}" name="likepost"
-                                    class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likepost"
-                                    data-toggle="tooltip" data-placement="top" title="" style="margin-left:5px">
-                                    {#empty
+                          <button id="likepost{{loop.index}}" data-post-id="{{post.id}}" name="likepost" class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likepost" data-toggle="tooltip" data-placement="top" title="" style="margin-left:5px">
+                            {#empty
                                     tooltip 'title'
                                     attr = tooltip doesn't show#}
-                                    {{post.likes|length}}
-                                </button>
+                            {{post.likes|length}}
+                          </button>
 
-                                {%if session["user_id"] == post.user_id%}
-                                <button id="deletepost{{loop.index}}" data-post-id="{{post.id}}" name="deletepost"
-                                    class="btn btn-info btn-xs deletepost glyphicon glyphicon-trash"
-                                    style="margin-left:5px">
-                                </button>
+                          {%if session["user_id"] == post.user_id%}
+                            <button id="deletepost{{loop.index}}" data-post-id="{{post.id}}" name="deletepost" class="btn btn-info btn-xs deletepost glyphicon glyphicon-trash" style="margin-left:5px"></button>
+
+                            {%if post.article_title%}
+                              <button id="editpostednews{{loop.index}}" name="editpostednews" class="btn btn-info btn-xs editpostednews bi-pencil-square" style="margin-left:5px" data-post-id="{{post.id}}" data-post-content="{{post.post}}" data-article-url="{{post.article_url}}" data-article-title="{{post.article_title}}" data-article-imgurl="{{post.article_imgurl}}" data-article-description="{{post.article_description}}"></button>
+                              {%else%}
+                              <button id="editpost{{loop.index}}" data-post-id="{{post.id}}" name="editpost" class="btn btn-info btn-xs replypost bi-pencil-square" style="margin-left:5px" onclick="window.location.href='/talk/editpost/{{post.id}}'"></button>
+                              {%endif%}
+
+                              {%endif%}
+                              {%if session["user_id"]%}
+                                <button id="replypost{{loop.index}}" data-post-id="{{post.id}}" name="replypost" class="btn btn-info btn-xs replypost bi bi-reply" style="margin-left:5px"></button>
                                 {%endif%}
-
-                                <!-- <button id="flagpost{{loop.index}}" data-post-id="{{post.id}}" name="flagpost"
-                                        class="btn btn-info btn-xs flagpost glyphicon glyphicon-flag">
-                                    </button> -->
-
-                                <button id="replypost{{loop.index}}" data-post-id="{{post.id}}" name="replypost"
-                                    class="btn btn-info btn-xs replypost bi bi-reply" style="margin-left:5px">
-                                </button>
+                              </div>
                             </div>
+                          </div>
                         </div>
-                    </div>
-                </div>
 
-            </div>
-        </div>
-    </div>
-    <!-- HIDDEN REPLY DIVISION -->
-    <div hidden class="row reply_row" id="replyDiv{{post.id}}">
-        <div class="container mb-5">
-            <form action="/api/reply/{{post.id}}" method="POST">
-                <div class="row">
-                    <div class="col-fluid">
-                        <div class="container">
-                            <div class="row">
+                      </div>
+                    </div>
+                  </div>
+                  <!-- HIDDEN REPLY DIVISION -->
+                  <div hidden="hidden" class="row reply_row" id="replyDiv{{post.id}}">
+                    <div class="container mb-5">
+                      <form action="/api/reply/{{post.id}}" method="POST">
+                        <div class="row">
+                          <div class="col-fluid">
+                            <div class="container">
+                              <div class="row">
                                 <div class="col-fluid">
 
-                                    <textarea rows="4" cols="50" name="response"></textarea>
+                                  <textarea rows="4" cols="50" name="response"></textarea>
 
                                 </div>
-                            </div>
-                            <div class="row">
+                              </div>
+                              <div class="row">
                                 <div class="col-xs-6">
-                                    <button type="submit" class="btn btn-default" type="button">
-                                        <span class="glyphicon glyphicon-send" id="replySubmitBtn{{post.id}}">
-                                            Submit
-                                        </span>
-                                    </button>
+                                  --------------------------
+                                  <button type="submit" class="btn btn-default">
+                                    <span class="glyphicon glyphicon-send" id="replySubmitBtn{{post.id}}">
+                                      Submit
+                                    </span>
+                                  </button>
 
-                                    <button class="btn btn-default" onclick="location.reload()">
-                                        <span class="glyphicon glyphicon-remove-sign"></span> Cancel </button>
-                                    </button>
-                                </div>
+                                  <button class="btn btn-default" onclick="location.reload()">
+                                    <span class="glyphicon glyphicon-remove-sign"></span>
+                                    Cancel
+                                  </button>
+                                </button>
+                              </div>
                             </div>
+                          </div>
                         </div>
+                      </form>
                     </div>
-                </div>
-            </form>
-        </div>
-    </div>
 
-
-
-    {# REPLYS DIVISION #}
-
-    {% for response in post.responses|reverse%}
-    <div class="row d-flex justify-content-end mb-4 p-0" id="response{{response.id}}">
-        <div class="col-10">
-
-            <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded">
-                <div class="container-fluid">
-                    <div class="row">
-                        <h5><span class="glyphicon glyphicon-time"></span>{{response.reply_author}} -
-                            {{response.response_date}}</h5>
-                        <div class="col-xs-12">
-                            {{response.response}}
-                        </div>
-                    </div>
-                    {# LIKES TO REPLIES DIVISION #}
-                    <div class="row">
-
-                        <div class="col-5 d-flex justify-content-start">
-
-                            <button type="submit" id="likereply{{loop.index}}-{{post.id}}" name="likereply"
-                                data-response-id="{{response.id}}"
-                                class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likereply"
-                                style="background-color:rgb(26, 33, 166)"> {{response.likes_reply|length}}
-                            </button>
-
-                            {%if session["user_id"] == post.user_id%}
-                            <button type="submit" id="deletereply{{loop.index}}" name="deletereply"
-                                data-response-id="{{response.id}}"
-                                class="btn btn-info btn-xs glyphicon glyphicon-trash deletereply"
-                                style="background-color:rgb(26, 33, 166)">
-                            </button>
-                            {%endif%}
-
-                            <!-- <button type="submit" id="flagreply{{loop.index}}" name="flagreply" data-response-id="{{response.id}}"
-                    class="btn btn-info btn-xs glyphicon glyphicon-flag flagreply"
-                    style="background-color:rgb(26, 33, 166)">
-                </button> -->
-
-                        </div>
-                    </div>
+                  </div>
                 </div>
 
-            </div>
-        </div>
+                {# REPLYS DIVISION #}
 
+                {% for response in post.responses|reverse%}
+                  <div class="row d-flex justify-content-end mb-4 p-0" id="response{{response.id}}">
+                    <div class="col-10">
 
-    </div>
-    {%endfor%}
+                      <div class="well well-lg w-100 h-100 shadow-sm p-2 bg-white rounded">
+                        <div class="container-fluid">
+                          <div class="row">
+                            <h5>
+                              <span class="glyphicon glyphicon-time"></span>{{response.reply_author}}
+                              -
+                              {{response.response_date}}</h5>
+                            <div class="col-xs-12">
+                              {{response.response}}
+                            </div>
+                          </div>
+                          {# LIKES TO REPLIES DIVISION #}
+                          <div class="row">
 
-    <!-- post_id_form = {{post_id_form}}
-    <p></p>
-    post.id = {{post.id}} -->
+                            <div class="col-5 d-flex justify-content-start">
 
+                              <button type="submit" id="likereply{{loop.index}}-{{post.id}}" name="likereply" data-response-id="{{response.id}}" class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likereply" style="background-color:rgb(26, 33, 166)">
+                                {{response.likes_reply|length}}
+                              </button>
 
-</div>
-<br>
-<br>
-{%endfor%}
-{#{%endfor%}#}
+                              {%if session["user_id"] == post.user_id%}
+                                <button type="submit" id="deletereply{{loop.index}}" name="deletereply" data-response-id="{{response.id}}" class="btn btn-info btn-xs glyphicon glyphicon-trash deletereply" style="background-color:rgb(26, 33, 166)"></button>
+                                {%endif%}
 
-{%endblock%}
-{# END OF MAIN CONTENT #}
+                                <!-- <button type="submit" id="flagreply{{loop.index}}" name="flagreply" data-response-id="{{response.id}}" class="btn btn-info btn-xs glyphicon glyphicon-flag flagreply" style="background-color:rgb(26, 33, 166)"> </button> -->
 
-{# SIDE CONTENT RIGHT #}
-{#{% block sidecontent_r %}{%endblock%}#}
-{# END OF SIDE CONTENT #}
+                              </div>
+                            </div>
+                          </div>
 
+                        </div>
+                      </div>
 
+                    </div>
+                    {%endfor%}
 
-{#
+                    <!-- post_id_form = {{post_id_form}} <p></p> post.id = {{post.id}} -->
 
+                  </div>
+                  <br>
+                  <br>
+                  {%endfor%}
+                  {#{%endfor%}#}
 
+                  {%endblock%}
+                  {# END OF MAIN CONTENT #}
 
-#}
+                  {# SIDE CONTENT RIGHT #}
+                  {#{% block sidecontent_r %}{%endblock%}#}
+                  {# END OF SIDE CONTENT #}
