@@ -54,9 +54,6 @@ except:
     API_KEY_2_keys = "nokey"
 
 
-# print(f"RECAPTCHA_PRIVATE_KEY_keys = {RECAPTCHA_PRIVATE_KEY_keys}")
-# print(f"RECAPTCHA_PUBLIC_KEY_keys = {RECAPTCHA_PUBLIC_KEY_keys}")
-
 
 RECAPTCHA_PUBLIC_KEY = os.environ.get(
     "RECAPTCHA_PUBLIC_KEY", RECAPTCHA_PUBLIC_KEY_keys)
@@ -94,10 +91,9 @@ with app.app_context():
     connect_db(app)
 
 
-
-
 #############################################################################
 
+# ***********ERROR HANDLING***************************
 errors = Blueprint('errors', __name__)
 @app.errorhandler(Exception)
 def server_error(err):
@@ -112,9 +108,13 @@ def None_Error():
     # For some reason app.js calls GET "/None" at some point, so until I figure this out, redirect
     return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
+# ***********BASE ROUTE***************************
+
 @app.route("/")
 def home():
     return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
+# ***********HOME PAGE***************************
 
 @app.route("/talk/<populateEditForm>/<int:post_id>")
 def main_page(populateEditForm, post_id):
@@ -168,7 +168,6 @@ def main_page(populateEditForm, post_id):
                            post_id=post_id,
                            Post=Post)
 
-
 @app.route("/talk/chat/<int:user_id>")
 def chat(user_id):
     """chat room rendering"""
@@ -177,7 +176,6 @@ def chat(user_id):
     users = User.query.all()
 
     return render_template("chat_room.html", users=users, currentuser=user, user=user)
-
 
 @app.route("/talk/api/search_news/<keyword>")
 def search_news(keyword):
@@ -212,8 +210,7 @@ def search_news(keyword):
     else:
         return jsonify(state="loginrequired")
 
-    # print(f"RESPONSE NEWS SEARCH: {resp.json()}")
-
+# ***********SIGN UP***************************
 
 @app.route("/talk/signup", methods=["POST", "GET"])
 def add_user():
@@ -279,6 +276,7 @@ def add_user():
 
     return render_template("user_form.html", form=form)
 
+# ***********SIGN IN***************************
 
 @app.route("/talk/signin", methods=["POST", "GET"])
 def signin():
@@ -310,6 +308,124 @@ def signin():
 
     return render_template("user_login.html", form=form)
 
+@app.route("/talk/users/<int:user_id>", methods=["DELETE"])
+def delete_user(user_id):
+    """Delete a user"""
+
+    if "user_id" not in session:
+        flash("You must be logged in to post!", "alert alert-dark")
+        return redirect("/")
+
+    user = User.query.get_or_404(user_id)
+
+    db.session.delete(user)
+    session_commit()
+
+    users = User.query.all()
+    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+
+@app.route("/talk/edit/<int:user_id>", methods=["POST", "GET"])
+def edit_user(user_id):
+    """Method for editing a user's info and password"""
+
+    print("*****************************************************--")
+    if "user_id" not in session:
+        flash("Please, log in first.", "alert alert-dark")
+        return redirect("/")
+
+    form = UpdateUser()
+    users = User.query.all()  # for context re-rendering
+    usr = User.query.get(user_id)
+    all_posts = Post.query.all()
+
+    # pre-populate the form:
+    if request.method == 'GET':
+        form.name.data = usr.name
+        form.last_name.data = usr.last_name
+        form.img_url.data = usr.img_url
+        form.username.data = usr.username
+
+    if form.validate_on_submit():
+
+        print("USER FORM VALIDATION *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+        name = form.name.data
+        last_name = form.last_name.data
+        img_url = form.img_url.data
+        username = form.username.data
+        old_password = form.old_password.data
+        new_password = form.new_password.data
+        print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+        print(f"name: {name}")
+        print(f"last_name: {last_name}")
+        print(f"img_url: {img_url}")
+        print(f"username: {username}")
+        print(f"password: {old_password}")
+        print(f"password: {new_password}")
+        print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
+
+        # authenticate old password
+        user = User.authenticate(username, old_password)
+
+        if user:
+            User.update_user(user, name=name, last_name=last_name,
+                             img_url=img_url, username=username, new_password=new_password, old_password=old_password)
+            flash(f"User {name} {last_name} was updated",
+                  "alert alert-primary")
+        else:
+            flash(f"User {name} {last_name} was NOT updated (incorrect password)",
+                  "alert alert-primary")
+
+        return redirect(url_for("main_page", populateEditForm=False, post_id=0))
+    else:
+        print(
+            f"--------------------------EDITING USER------------------------------------")
+        return render_template("edit_user_form.html", users=users, all_posts=all_posts, form=form, User=User, user=usr)
+
+@app.route("/talk/userprofile/<int:user_id>")
+def get_user_profile(user_id):
+
+    print(f"***************************************")
+    users = User.query.all()
+
+    user = User.query.get_or_404(user_id)
+
+    username = user.username
+    name = user.name
+    last_name = user.last_name
+    imageurl = user.img_url
+
+    print(f"------------------------------------------")
+    nb_posts = Post.query.filter_by(user_id=user.id).count()
+    nb_likes = Like.query.filter_by(user_id=user.id).count()
+    nb_posts_liked = 0
+    nb_likes_articles = 0
+
+    # likedarticles = LikedArticle.query.filter_by(user_id=user.id).count()
+
+    posts = Post.query.filter_by(user_id=user.id).all()
+
+    print(f"+++++++++++++++++++++++++++++++++++++++++++")
+    for post in posts:
+        if Like.query.filter(Like.post_id == post.id).first() != None:
+            nb_posts_liked += 1
+
+    return render_template("user_profile.html",
+                           users=users,
+                           currentuser=user,
+                           user=user,
+                           username=username,
+                           name=name,
+                           last_name=last_name,
+                           imageurl=imageurl,
+                           nb_posts=nb_posts,
+                           nb_likes=nb_likes,
+                           nb_posts_liked=nb_posts_liked)
+
+@app.route("/tags")
+def get_tags():
+    """list all existing tags"""
+
+# ***********CREATE/EDIT A POST OR A NEWS POST***************************
 
 @app.route("/talk/post/<int:user_id>", methods=["POST", "GET"])
 def post(user_id):
@@ -358,7 +474,6 @@ def post(user_id):
                            currentuser=user,
                            old_posts=old_posts,
                            form=form)
-
 
 @app.route("/talk/editpost/<int:post_id>", methods=["POST", "GET"])
 def update_post(post_id):
@@ -448,127 +563,7 @@ def post_news(user_id):
 
     return redirect("/")
 
-
-@app.route("/talk/users/<int:user_id>", methods=["DELETE"])
-def delete_user(user_id):
-    """Delete a user"""
-
-    if "user_id" not in session:
-        flash("You must be logged in to post!", "alert alert-dark")
-        return redirect("/")
-
-    user = User.query.get_or_404(user_id)
-
-    db.session.delete(user)
-    session_commit()
-
-    users = User.query.all()
-    return redirect(url_for("main_page", populateEditForm=False, post_id=0))
-
-
-@app.route("/talk/edit/<int:user_id>", methods=["POST", "GET"])
-def edit_user(user_id):
-    """Method for editing a user's info and password"""
-
-    print("*****************************************************--")
-    if "user_id" not in session:
-        flash("Please, log in first.", "alert alert-dark")
-        return redirect("/")
-
-    form = UpdateUser()
-    users = User.query.all()  # for context re-rendering
-    usr = User.query.get(user_id)
-    all_posts = Post.query.all()
-
-    # pre-populate the form:
-    if request.method == 'GET':
-        form.name.data = usr.name
-        form.last_name.data = usr.last_name
-        form.img_url.data = usr.img_url
-        form.username.data = usr.username
-
-    if form.validate_on_submit():
-
-        print("USER FORM VALIDATION *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
-        name = form.name.data
-        last_name = form.last_name.data
-        img_url = form.img_url.data
-        username = form.username.data
-        old_password = form.old_password.data
-        new_password = form.new_password.data
-        print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
-        print(f"name: {name}")
-        print(f"last_name: {last_name}")
-        print(f"img_url: {img_url}")
-        print(f"username: {username}")
-        print(f"password: {old_password}")
-        print(f"password: {new_password}")
-        print("*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*")
-
-        # authenticate old password
-        user = User.authenticate(username, old_password)
-
-        if user:
-            User.update_user(user, name=name, last_name=last_name,
-                             img_url=img_url, username=username, new_password=new_password, old_password=old_password)
-            flash(f"User {name} {last_name} was updated",
-                  "alert alert-primary")
-        else:
-            flash(f"User {name} {last_name} was NOT updated (incorrect password)",
-                  "alert alert-primary")
-
-        return redirect(url_for("main_page", populateEditForm=False, post_id=0))
-    else:
-        print(
-            f"--------------------------EDITING USER------------------------------------")
-        return render_template("edit_user_form.html", users=users, all_posts=all_posts, form=form, User=User, user=usr)
-
-
-@app.route("/talk/userprofile/<int:user_id>")
-def get_user_profile(user_id):
-
-    print(f"***************************************")
-    users = User.query.all()
-
-    user = User.query.get_or_404(user_id)
-
-    username = user.username
-    name = user.name
-    last_name = user.last_name
-    imageurl = user.img_url
-
-    print(f"------------------------------------------")
-    nb_posts = Post.query.filter_by(user_id=user.id).count()
-    nb_likes = Like.query.filter_by(user_id=user.id).count()
-    nb_posts_liked = 0
-    nb_likes_articles = 0
-
-    # likedarticles = LikedArticle.query.filter_by(user_id=user.id).count()
-
-    posts = Post.query.filter_by(user_id=user.id).all()
-
-    print(f"+++++++++++++++++++++++++++++++++++++++++++")
-    for post in posts:
-        if Like.query.filter(Like.post_id == post.id).first() != None:
-            nb_posts_liked += 1
-
-    return render_template("user_profile.html",
-                           users=users,
-                           currentuser=user,
-                           user=user,
-                           username=username,
-                           name=name,
-                           last_name=last_name,
-                           imageurl=imageurl,
-                           nb_posts=nb_posts,
-                           nb_likes=nb_likes,
-                           nb_posts_liked=nb_posts_liked)
-
-
-@app.route("/tags")
-def get_tags():
-    """list all existing tags"""
-
+# ***********DELETE A POST***************************
 
 @app.route("/api/posts/<int:id>", methods=["DELETE"])
 def delete_post(id):
@@ -582,8 +577,7 @@ def delete_post(id):
     session_commit()
     return jsonify(message="deleted")
 
-# /***********LIKE POSTS***************************/
-
+# /***********LIKE A POST***************************/
 
 @app.route("/api/posts/like/<int:id>", methods=["POST"])
 def like_post(id):
@@ -627,8 +621,7 @@ def like_post(id):
 
         return jsonify(likes=nb_likes)
 
-# ***********LIKE REPLIES***************************
-
+# ***********CREATE A REPLY***************************
 
 @app.route("/api/replies/<int:id>", methods=["DELETE"])
 def delete_reply(id):
@@ -643,6 +636,7 @@ def delete_reply(id):
     serialized = {"reply": "deleted"}
     return jsonify(message=serialized)
 
+# ***********LIKE A REPLY***************************
 
 @app.route("/api/replies/like/<int:id>", methods=["POST"])
 def like_reply(id):
@@ -677,7 +671,6 @@ def like_reply(id):
 
 # ***************************REPLY TO A POST****************************
 
-
 @app.route("/api/reply/<int:post_id>", methods=["GET", "POST"])
 def answer(post_id):
     """Create a new form and a reply linked to a specific post"""
@@ -686,8 +679,6 @@ def answer(post_id):
         flash("You must be logged in to post!", "alert alert-dark")
         return redirect("/")
 
-    # form = AddUser()
-    # form = AddResponse()
     users = User.query.all()
     all_posts = Post.query.all()
 
@@ -715,8 +706,6 @@ def answer(post_id):
     user_auth = session.get("user_id", None)
 
     return redirect(url_for("main_page", populateEditForm=False, post_id=0))
-    # return render_template("reply_form.html", form=form, post=post)
-
 
 def session_commit():
     try:
@@ -728,7 +717,6 @@ def session_commit():
         db.session.rollback()
         return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
-
 @app.route("/talk/signout")
 def logout():
     """Logs user out and redirects to homepage."""
@@ -739,7 +727,6 @@ def logout():
 
     return redirect("/")
 
-
 @app.route("/api/flashloginfirst")
 def login_required():
     print("******************loginrequired!****************")
@@ -747,14 +734,12 @@ def login_required():
     return jsonify(message="flashmessagesent")
     # return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
-
 @app.route("/api/flashalreadyliked")
 def already_liked():
     flash("You can't like a post twice!", "alert alert-dark")
     return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
 # ############################################################################## SAVE ARTICLES ####################################################################
-
 
 @app.route("/api/article/save", methods=['GET', 'POST', 'OPTIONS'])
 def save_article():
@@ -801,7 +786,6 @@ def save_article():
     db.session.commit()
 
     return jsonify(message="saved")
-
 
 # ############################################################################## LIKE ARTICLES ####################################################################
 
@@ -857,6 +841,5 @@ def like_article():
             title=article_title).count()  # update value
 
         return jsonify(likes=nb_likes)
-
 
 print("APP.PY LOADED")
