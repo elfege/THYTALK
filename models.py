@@ -6,7 +6,9 @@ from random import randint
 from datetime import datetime
 from flask import flash
 
+
 db = SQLAlchemy()
+
 
 bcrypt = Bcrypt()
 

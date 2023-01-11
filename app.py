@@ -39,6 +39,8 @@ from flask import (Flask,
 
 from flask_mobility import Mobility
 
+from flask_migrate import Migrate
+
 import os
 import re
 
@@ -68,9 +70,9 @@ API_KEY_2 = os.environ.get('API_KEY_2', API_KEY_2_keys)
 app = Flask(__name__)
 Mobility(app)
 api = Api(app)
+migrate = Migrate(app, db)
 
 
-# BEWARE that postgres:/// or postgresql:/// are now deprecated and will return dialect error
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
     'DATABASE_URL', "postgresql:///talk")
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
