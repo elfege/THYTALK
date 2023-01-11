@@ -1,7 +1,7 @@
 /__pycache__
 /venv
 
-/DOCS/API.md
+**/API.md
 
 test_talk.py 
 
