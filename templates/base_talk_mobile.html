@@ -346,34 +346,34 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               <div class="row mb-4 border-bottom pb-2">
 
                 {%if currentuser and LikedArticle%}
-                {%if session['user_id']==currentuser.id%}
-                <!-- likes for articles are not persistent but remain in db for furture recommendations purpose -->
-                <div class="col-2 d-flex justify-content-end">
-                  <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}} data-article-loopidx="{{loop.index}}"
-                    data-article-title="{{article['title']}} data-art-id="{{article.id}}" name="likearticle"
-                    class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
-                    data-placement="top" title="" style="margin-left:5px">
-                    {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
-                    LikedArticle.title=="{{article['title']}}",
-                    LikedArticle.url=="{{article['url']}}").all()|length}}
-                  </button>
-                </div>
+              {%if session['user_id']==currentuser.id%}
+              <!-- likes for articles are not persistent but remain in db for furture recommendations purpose -->
+              <div class="col-2 d-flex justify-content-end">
+                <button id="likearticle{{loop.index}}" data-user-id="{{currentuser.id}}" data-article-loopidx="{{loop.index}}"
+                  data-article-title="{{article['title']}} data-art-id="{{article.id}}" name="likearticle"
+                  class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
+                  data-placement="top" title="" style="margin-left:5px">
+                  {{LikedArticle.query.filter(LikedArticle.user_id==user.id,
+                  LikedArticle.title=="{{article['title']}}",
+                  LikedArticle.url=="{{article['url']}}").all()|length}}
+                </button>
+              </div>
 
-                <div class="col-8 d-flex justify-content-end">
-                  <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
-                    data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
+              <div class="col-8 d-flex justify-content-end">
+                <button class="btn glyphicon bi bi-save savearticle_cls" id="savearticle{{loop.index}}"
+                  data-article-url="{{article['url']}}" data-article-title="{{article['title']}}"> Save</button>
 
-                </div>
-                <div class="col-2 d-flex justify-content-end">
-                  <button class="btn btn-primary glyphicon glyphicon-pencil commentArticle"
-                    id="commentArticle{{loop.index}}" name="commentArticle" data-article-url="{{article['url']}}"
-                    data-article-title="{{article['title']}}" data-article-imgurl="{{article['image']}}"
-                    data-userid="{{currentuser.id}}" data-article-description="{{article['description']}}">
-                  </button>
-                </div>
+              </div>
+              <div class="col-2 d-flex justify-content-end">
+                <button class="btn btn-primary glyphicon glyphicon-pencil commentArticle"
+                  id="commentArticle{{loop.index}}" name="commentArticle" data-article-url="{{article['url']}}"
+                  data-article-title="{{article['title']}}" data-article-imgurl="{{article['image']}}"
+                  data-userid="{{currentuser.id}}" data-article-description="{{article['description']}}">
+                </button>
+              </div>
 
-                {%endif%}
-                {%endif%}
+              {%endif%}
+              {%endif%}
 
 
               </div>

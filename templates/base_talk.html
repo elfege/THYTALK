@@ -256,7 +256,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
             {%for article in articles%}
             <div class="row" id="rowImage">
               <!-- Featured image -->
-              imageDiv{{loop.index}}
               <div class="col-fluid imgArticle" id="imageDiv{{loop.index}}"> <!-- we don't use DOM ids for saving in db so it's ok that search will recreate identical id's since these are removed upon results implementation -->
                 <img src="{{article['image']}}" class="img-fluid" max-width="20%" />
                 <a class="links" href="#!">
@@ -312,9 +311,6 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
 
               {%endif%}
               {%endif%}
-
-
-
 
             </div>
             {%endfor%}
