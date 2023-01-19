@@ -256,20 +256,21 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
             {%for article in articles%}
             <div class="row" id="rowImage">
               <!-- Featured image -->
-              <div class="col-fluid imgArticle" id="imageDiv">
+              imageDiv{{loop.index}}
+              <div class="col-fluid imgArticle" id="imageDiv{{loop.index}}"> <!-- we don't use DOM ids for saving in db so it's ok that search will recreate identical id's since these are removed upon results implementation -->
                 <img src="{{article['image']}}" class="img-fluid" max-width="20%" />
                 <a class="links" href="#!">
                   <div class="mask" style="background-color: rgba(251, 251, 251, 0.15);"></div>
                 </a>
               </div>
             </div>
-            <div class="row" id="rowPubDate">
+            <div class="row" id="rowPubDate{{loop.index}}">
               <div class="col-fluid articlePubDate">
                 <u>{{article['publishedAt']|trim('Z')|replace('T', ' ')}}</u>
               </div>
             </div>
             <!-- Article title and description -->
-            <div class="row" id="rowArtDescription">
+            <div class="row" id="rowArtDescription{{loop.index}}">
               <div class="col-fluid articleDescription">
                 <a class="text-dark" href="{{article['url']}}">
                   <h5>
@@ -286,7 +287,7 @@ be happy, pluralism, cosmopolitanism, cosmopolite, democrats, republicans, indep
               {%if session['user_id']==currentuser.id%}
               <!-- likes for articles are not persistent but remain in db for furture recommendations purpose -->
               <div class="col-2 d-flex justify-content-end">
-                <button id="likearticle{{loop.index}}" data-user-id={{currentuser.id}} data-article-loopidx="{{loop.index}}"
+                <button id="likearticle{{loop.index}}" data-user-id="{{currentuser.id}}" data-article-loopidx="{{loop.index}}"
                   data-article-title="{{article['title']}} data-art-id="{{article.id}}" name="likearticle"
                   class="btn btn-info btn-xs glyphicon glyphicon-thumbs-up likearticle" data-toggle="tooltip"
                   data-placement="top" title="" style="margin-left:5px">
