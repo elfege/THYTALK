@@ -131,10 +131,19 @@ def main_page(populateEditForm, post_id):
     # print(f"////////////////////populateEditForm ===> {populateEditForm}////////////////////////////////")
     # print(f"////////////////////post_id ===> {post_id}////////////////////////////////")
     
-    if populateEditForm and post_id != 0:
+    if populateEditForm and post_id != 0 and "user_id" in session:
         post = Post.query.get(post_id)
-        form_edit_post.post_title.data = post.post_title
-        form_edit_post.post_content.data = post.post        
+        post_user_id = post.user_id
+        print(f"========================post_user_id========= {post_user_id}")
+        print(f"========================session['user_id']========= {session['user_id']}")
+        
+        if post_user_id == session["user_id"]:
+            
+            form_edit_post.post_title.data = post.post_title
+            form_edit_post.post_content.data = post.post
+        else:
+            flash("You can only edit posts published by you!", "alert alert-dark")
+            return redirect(url_for("main_page", populateEditForm=False, post_id=0))       
 
     if ("user_id" in session):
         user = User.query.get(user_auth)
