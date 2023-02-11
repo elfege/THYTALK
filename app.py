@@ -114,6 +114,8 @@ def None_Error():
 def home():
     return redirect(url_for("main_page", populateEditForm=False, post_id=0))
 
+
+
 # ***********HOME PAGE***************************
 
 @app.route("/talk/<populateEditForm>/<int:post_id>")
@@ -850,5 +852,29 @@ def like_article():
             title=article_title).count()  # update value
 
         return jsonify(likes=nb_likes)
+
+# ***********PRIVACY PAGE ROUTE***************************
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
+
+# ***********DELETE ACCOUNT ROUTE***************************
+@app.route("/deleteaccount/<int:id>")
+def deleteaccount(id):
+    
+    if "user_id" not in session:
+        return redirect("/")
+    
+    user = User.query.get_or_404(id)
+    User.update_online_status(user, False)
+    session.pop("user_id")
+    
+    db.session.delete(user)
+    db.session.commit()
+    
+    flash(f"USER {user.name} DELETED!", "alert alert-dark")
+    return redirect("/")
+
+
 
 print("APP.PY LOADED")

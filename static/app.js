@@ -349,6 +349,13 @@ function overlayOff() {
     document.getElementById("overlay").style.display = "none";
 }
 
+$("#deleteaccount").on("click", (e) => {
+    e.preventDefault()
+    const userId = $("#deleteaccount").attr("data-userId")
+    overlayOn(`<p>Are you sure you want to delete your account? This action is irreversible!</p>
+    <a class="btn btn-warning w-50" href="/deleteaccount/${userId}">YES</a><a class="btn btn-primary w-50">CANCEL</a>`)
+})
+
 
 $("#goto_saved_art_nav").click(() => {
     openNav();

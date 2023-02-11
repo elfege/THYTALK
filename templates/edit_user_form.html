@@ -1,59 +1,69 @@
-
 {%if request.MOBILE%}
-{% extends "base_talk_mobile.html" %}
-{%else%}
-{% extends "base_talk.html" %}
-{%endif%}
+  {% extends "base_talk_mobile.html" %}
+  {%else%}
+  {% extends "base_talk.html" %}
+  {%endif%}
 
-{% block title %}talk{% endblock %}
+  {% block title %}talk{% endblock %}
 
+  {# MAIN CONTENT #}
+  {% block content %}
 
+    <h2>{{user.name}}
+      {{user.last_name}}</h2>
+    <div class="container">
+      <div class="row ml-5">
+        <a id="deleteaccount" data-userId={{user.id}} href="">DELETE MY ACCOUNT</a>
+      </div>
+      <div class="row">
 
-{# MAIN CONTENT #}
-{% block content %}
+        <form action="/talk/edit/{{user.id}}" method="POST">
+          {{form.hidden_tag()}}
 
-<h2>{{user.name}} {{user.last_name}}</h2>
+          {%for field in form
+    if field.widget.input_type != 'hidden' %}
+            {# hide Cross-Site Request Forgery (CSRF) Token #}
 
-<form action="/talk/edit/{{user.id}}" method="POST">
-    {{form.hidden_tag()}}
+            <div class="form-group">
+              {{ field.label }}
+              {{field(class_="form-control", size=32)}}
 
-    {%for field in form
-    if field.widget.input_type != 'hidden' %} {# hide Cross-Site Request Forgery (CSRF) Token #}
+              {%for error in field.errors %}
+                {{error}}
+                {%endfor%}
 
-    <div class="form-group">
-        {{ field.label }}
-        {{field(class_="form-control", size=32)}}
+              </div>
+              {%endfor%}
+              {% for error in form.recaptcha.errors %}
+                {{ error }}
+              {% endfor %}
+              <!-- <button>submit</button> -->
+            </form>
 
+          </div>
+        </div>
+        {%endblock%}
+        {# END OF MAIN CONTENT #}
 
+        {# SIDE CONTENT RIGHT #}
+        {% block sidecontent_r %}
+          <h1>{{ user.name }}</h1>
+          <p>First Name:
+            <b>
+              <i>{{ user.name }}</i>
+            </b>
+          </p>
+          <p>Last Name:
+            <b>
+              <i>{{ user.last_name }}</i>
+            </b>
+          </p>
 
-        {%for error in field.errors %}
-        {{error}}
-        {%endfor%}
+          {% if user.img_url %}
+            <div class="talk_img">
+              <img src="{{user.img_url}}" class="rounded float-right img-thumbnail">
+            </div>
+          {% endif %}
 
-
-
-    </div>
-    {%endfor%}
-    {% for error in form.recaptcha.errors %}
-    {{ error }}
-    {% endfor %}
-    <!-- <button>submit</button> -->
-</form>
-
-{%endblock%}
-{# END OF MAIN CONTENT #}
-
-{# SIDE CONTENT RIGHT #}
-{% block sidecontent_r %}
-<h1>{{ user.name }}</h1>
-<p>First Name: <b><i>{{ user.name }}</i></b></p>
-<p>Last Name: <b><i>{{ user.last_name }}</i></b></p>
-
-{% if user.img_url %}
-<div class="talk_img">
-    <img src="{{user.img_url}}" class="rounded float-right img-thumbnail">
-</div>
-{% endif %}
-
-{%endblock%}
-{# END OF SIDE CONTENT #}
+          {%endblock%}
+          {# END OF SIDE CONTENT #}
